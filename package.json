@@ -1,0 +1,31 @@
+{
+  "name": "brutaltd",
+  "version": "1.0.0",
+  "description": "A Brutal Alien Tower Defense Game",
+  "scripts": {
+    "start": "node start.js",
+    "build": "node node_modules/gulp/bin/gulp.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pseudogames/brutaltd.git"
+  },
+  "keywords": [
+    "brutal",
+    "tower-defense",
+    "game",
+    "javascript",
+    "canvas"
+  ],
+  "author": "zed,milfont,lastikas",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pseudogames/brutaltd/issues"
+  },
+  "homepage": "https://github.com/pseudogames/brutaltd#readme",
+  "devDependencies": {
+    "connect": "^3.4.1",
+    "gulp": "^3.9.1",
+    "serve-static": "^1.10.2"
+  }
+}
