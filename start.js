@@ -3,5 +3,5 @@ var serveStatic = require('serve-static')
 
 app.use(serveStatic('app'))
 
-console.log(' ➜   Open: http://localhost:8080')
-app.listen(8080)
+console.log(' ➜   Open: http://localhost:6660')
+app.listen(6660)
