@@ -1,9 +1,14 @@
 // Create the canvas
 var canvas = document.createElement("canvas");
 var ctx = canvas.getContext("2d");
-var grid_unit = 16,
-	grid_columns = 32;
-
-canvas.height = canvas.width = grid_unit * grid_columns;
-
+canvas.height = canvas.width = 512;
 document.body.appendChild(canvas);
+
+let grid = new Grid(32,32);
+let render = new Render(grid, ctx);
+
+for(var y=0; y<grid.h; y++) {
+	for(var x=0; x<grid.w; x++) {
+		render.plot(new Vector(x,y,0));
+	}
+}
