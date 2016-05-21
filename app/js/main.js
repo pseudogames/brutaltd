@@ -1,3 +1,9 @@
+'use strict';
+
+import Grid from "./_grid";
+import Render from "./_render";
+import Vector from "./_vector";
+
 // Create the canvas
 var canvas = document.createElement("canvas");
 var ctx = canvas.getContext("2d");

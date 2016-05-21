@@ -6,7 +6,7 @@ Brutal Alien Tower Defense
 npm install
 
 #Build project
-npm run build
+gulp build
 
 #Start
-npm start
+gulp
