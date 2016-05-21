@@ -1,8 +1,8 @@
 'use strict';
 
-import Grid from "./_grid";
-import Render from "./_render";
-import Vector from "./_vector";
+import Vector from "./Vector";
+import Grid from "./Grid";
+import Render from "./Render";
 
 // Create the canvas
 var canvas = document.createElement("canvas");

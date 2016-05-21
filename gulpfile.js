@@ -21,7 +21,7 @@ gulp.task('reload', function () {
 
 
 gulp.task('clean', function(){
-	del([ 'build/*' ]);
+	del.sync([ 'build/**' ]);
 });
 
 gulp.task('copy', function () {
@@ -30,7 +30,7 @@ gulp.task('copy', function () {
 		.pipe(gulp.dest('build'));
 });
 
-gulp.task('watch', function () {
+gulp.task('watch', ['clean', 'build'], function () {
 	gulp.watch(['./app/index.html','./app/js/*.js'], ['build']);
 	gulp.watch(['./build/js/*.js'], ['reload']);
 });
@@ -42,4 +42,4 @@ gulp.task('build', ['clean','copy'], function () {
 	});
 });
 
-gulp.task('default', ['build','watch','connect']);
+gulp.task('default', ['watch','connect']);

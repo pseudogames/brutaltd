@@ -1,5 +1,6 @@
+import Vector from "./Vector";
 
-class Render {
+export default class Render {
 	constructor(grid,canvas) {
 		this.grid = grid;
 		this.canvas = canvas;
