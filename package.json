@@ -33,6 +33,7 @@
     "gulp": "^3.9.1",
     "gulp-connect": "^4.0.0",
     "gulp-exec": "^2.1.2",
+	"gulp-scp2": "^0.2.0",
     "webpack": "^1.13.0",
     "webpack-dev-server": "^1.14.1"
   }
