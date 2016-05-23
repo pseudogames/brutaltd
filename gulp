@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cd node_modules/.bin
+exec ./gulp "$@"
