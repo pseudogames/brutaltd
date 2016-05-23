@@ -25,9 +25,17 @@ document.body.appendChild(canvas);
 // );
 
 const e = new Enemy([
-	[0,32],
+	[0,16],
+	[16,16],
+	[16,20],
+	[0,20],
+	[0,25],
+	[16,25],
+	[32,25],
 	[32,32],
-	[32,0],
+	[16,32],
+	[16,16],
+	[16,0],
 	[0,0]
 ]);
 
@@ -39,7 +47,7 @@ class App {
 	main () {
 		this.now = Date.now();
 
-		let delta = (this.now - this.then) / 100;
+		let delta = (this.now - this.then) / 1000;
 
 		this.time_elapsed += 1000;
 
@@ -48,12 +56,12 @@ class App {
 		this.then = this.now;
 
 		ctx.clearRect(0,0,canvas.width,canvas.height);
-		ctx.fillRect(e.position.x,e.position.y,32,32);
+		ctx.fillRect(e.position.x*15,e.position.y*15,32,32);
 
 		// render.plot(e.position);
 		// render.draw();
 
-		if(this.time_elapsed > 500000) {
+		if(e.completed_path) {
 			this.end();
 		} else {
 			this.raf = requestAnimationFrame( ()=> this.main() );
