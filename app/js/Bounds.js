@@ -1,6 +1,6 @@
 import Vector from "./Vector";
 
-export default class Box {
+export default class Bounds {
 	// useful methods, but misleading if on Vector
 
 	static norm(a,b) {

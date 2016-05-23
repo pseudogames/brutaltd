@@ -1,5 +1,6 @@
 import Vector from "./Vector";
-import Box from "./Box";
+import Bounds from "./Bounds";
+import Tween from "./Tween";
 
 export default class Render {
 
@@ -10,16 +11,32 @@ export default class Render {
 		this.canvas = document.createElement("canvas");
 		this.screen = this.canvas.getContext("2d");
 		document.body.appendChild(this.canvas);
+
+		var that = this;
+		this.scroll_rel = 0.5;
+		this.scaler = new Tween(this, "scale", _ => that.rezoom());
 		this.resize();
+
+		this.resizer = _ => that.resize();
+		this.zoomer = e => e.button == 1 && that.zoom();
+		this.scroller = e => that.scroll(e.deltaY);
+		window.addEventListener('resize', this.resizer);
+		window.addEventListener('click', this.zoomer);
+		window.addEventListener('wheel', this.scroller);
+	}
+
+	cleanup() {
+		this.scaler.cleanup();
+		window.removeEventListener('resize', this.resizer);
+		window.removeEventListener('click', this.zoomer);
+		window.removeEventListener('wheel', this.scroller);
 	}
 
 	resize() {
-
 		this.viewport = new Vector(
 			this.canvas.width  = window.innerWidth,
 			this.canvas.height = window.innerHeight
 		);
-		console.log(this.viewport);
 
 		this.bounds = {
 			min: new Vector(Number.MAX_VALUE, Number.MAX_VALUE),
@@ -30,8 +47,8 @@ export default class Render {
 			for(let y=0; y<this.grid.size.y; y+=Math.max(1,this.grid.size.y-1)) {
 				for(let x=0; x<this.grid.size.x; x+=Math.max(1,this.grid.size.x-1)) {
 					let p = this.projection.project(new Vector(x,y,z));
-					this.bounds.min = Box.min(this.bounds.min, p);
-					this.bounds.max = Box.max(this.bounds.max, p);
+					this.bounds.min = Bounds.min(this.bounds.min, p);
+					this.bounds.max = Bounds.max(this.bounds.max, p);
 				}
 			}
 		}
@@ -41,25 +58,47 @@ export default class Render {
 
 		this.origin = this.projection.project(Vector.zero()).sub(this.bounds.min);
 
-		let s = Box.norm(this.viewport, this.bounds.size);
-		this.scale = Math.min(s.x, s.y);
+		let s = Bounds.norm(this.viewport, this.bounds.size);
+		let so = Math.min(s.x, s.y);
+		let si = Math.max(s.x, s.y);
+		this.scale = this.scaler.target = 
+			this.scaler.target && this.scaler.target === this.scale_in ? si : so;
+		this.scale_out = so;
+		this.scale_in  = si;
 
+		this.rezoom();
+	}
+
+	rezoom() {
+		this.scroll_abs = Bounds.min(this.viewport.sub(this.bounds.size.scale(this.scale)), Vector.zero())
+		this.draw();
+	}
+
+	zoom() {
+		this.scaler.animate(this.scaler.target == this.scale_in ? this.scale_out : this.scale_in);
+	}
+
+	scroll(y) {
+		this.scroll_rel = Math.max(0,Math.min(1,this.scroll_rel + Math.sign(y)/8));
 		this.draw();
 	}
 
 	grid_to_canvas(grid_pos) {
-		return this.projection.project(grid_pos).add(this.origin).scale(this.scale);
+		return this.projection.project(grid_pos)
+			.add(this.origin)
+			.scale(this.scale)
+			.add(this.scroll_abs.scale(this.scroll_rel));
 	}
 
 	plot(grid_pos, color) {
 		let canvas_pos = this.grid_to_canvas(grid_pos);
-		if(!color) color = "rgb("+Box.norm(grid_pos,this.grid.size).scale(255).floor().toString()+")";
+		if(!color) color = "rgb("+Bounds.norm(grid_pos,this.grid.size).scale(255).floor().toString()+")";
 		this.screen.fillStyle = color;
 		this.screen.fillRect(canvas_pos.x, canvas_pos.y, 3,3);
 	}
 
 	draw() {
-		this.screen.clearRect(0, 0, this.viewport.width, this.viewport.height);
+		this.screen.clearRect(0, 0, this.viewport.x, this.viewport.y);
 		for(let z=0; z<this.grid.size.z; z++) {
 			for(let y=0; y<this.grid.size.y; y++) {
 				for(let x=0; x<this.grid.size.x; x++) {

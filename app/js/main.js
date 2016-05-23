@@ -16,6 +16,5 @@ let render = new Render(grid, sprites,
 	)
 );
 
-window.addEventListener("resize", _ => render.resize());
-//window.setInterval(_ => render.draw(), 200);
+//window.setInterval(_ => render.draw(), 1000/30);
 
