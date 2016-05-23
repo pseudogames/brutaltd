@@ -1,3 +1,5 @@
+import Vector from "./Vector";
+
 const limiter = {
 	[-1] : Math.max,
 	[1]  : Math.min
@@ -7,10 +9,7 @@ export default class Enemy {
 	constructor(path_instructions = [0,0]) {
 		console.log("A new Enemy has come to life");
 
-		this.position = {
-			x : 0,
-			y : 0
-		};
+		this.position = new Vector(0,0,0);
 
 		this.speed = 15;
 		this.path_instructions = path_instructions;
@@ -26,10 +25,8 @@ export default class Enemy {
 		let {x,y}        = this.position;
 		let moved_amount = this.speed * amount;
 
-		this.position = { 
-			x : this.limit(this.x_direction, moved_amount, x, nx),
-			y : this.limit(this.y_direction, moved_amount, y, ny)
-		};
+		this.position.x = this.limit(this.x_direction, moved_amount, x, nx);
+		this.position.y = this.limit(this.y_direction, moved_amount, y, ny);
 
 		if(this.position.x == nx && this.position.y == ny) {
 			if(this.current_instruction == this.path_instructions.length -1) {
