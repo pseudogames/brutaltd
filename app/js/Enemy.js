@@ -1,44 +1,49 @@
-export default class Enemy {
+const limiter = {
+	[-1] : Math.max,
+	[1]  : Math.min
+}
 
-	constructor(path_instructions) {
+export default class Enemy {
+	constructor(path_instructions = [0,0]) {
 		console.log("A new Enemy has come to life");
 
 		this.position = {
 			x : 0,
 			y : 0
-		}
+		};
 
-		this.speed = 3;
-
+		this.speed = 15;
 		this.path_instructions = path_instructions;
-
-		this.current_instruction = null;
-
-		this.set_instruction();
+		this.current_instruction = -1;
+		this.next_instruction();
+		this.completed_path = false;
 	}
 
 	move(amount) {
-		let [nx,ny] = this.path_instructions[this.current_instruction];
-		let {x,y}   = this.position;
-		let moved   = this.speed * amount;
+		if(this.completed_path === true) return;
 
-		x = this.limit(this.x_direction, moved, x, nx);
-		y = this.limit(this.y_direction, moved, y, ny);
+		let [nx,ny]      = this.path_instructions[this.current_instruction];
+		let {x,y}        = this.position;
+		let moved_amount = this.speed * amount;
 
-		this.position = { x, y };
+		this.position = { 
+			x : this.limit(this.x_direction, moved_amount, x, nx),
+			y : this.limit(this.y_direction, moved_amount, y, ny)
+		};
 
-		if(x == nx && y == ny) {
-			if(this.current_instruction < this.path_instructions.length -1) {
-				this.set_instruction();
+		if(this.position.x == nx && this.position.y == ny) {
+			if(this.current_instruction == this.path_instructions.length -1) {
+				this.completed_path = true;
+			} else {
+				this.next_instruction();
 			}
 		}
 
 		console.log(`Enemy.move current position: ${this.position.x},${this.position.y}`);
 	}
 
-	set_instruction() {
-		console.log(`Enemy.move.set_instruction`);
-		if(this.current_instruction === null ) this.current_instruction = -1;
+	next_instruction() {
+		console.log(`Enemy.move.next_instruction`);
 
 		this.current_instruction++;
 
@@ -50,12 +55,7 @@ export default class Enemy {
 	}
 
 	limit(direction, amount, current_position, next_position) {
-		let new_position = current_position;
-		if(direction < 0) {
-			new_position = Math.max(current_position + amount * direction, next_position);
-		} else {
-			new_position = Math.min(current_position + amount * direction, next_position);
-		}
-		return new_position;
+		if(Math.abs(direction) == 0) return current_position;
+		return limiter[direction](current_position + amount * direction, next_position);
 	}
 }
