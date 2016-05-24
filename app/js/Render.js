@@ -124,7 +124,7 @@ export default class Render {
 		for(let z=0; z<this.grid.size.z; z++) {
 			for(let y=0; y<this.grid.size.y; y++) {
 				for(let x=0; x<this.grid.size.x; x++) {
-					this.sprite(new Vector(x,y,z), "tower", "first", "idle", 0);
+					this.sprite(new Vector(x,y,z), "scene", "furniture", "idle", 2);
 				}
 			}
 		}

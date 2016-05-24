@@ -3,24 +3,24 @@
 	"frames_per_cycle": 3,
 	"group": {
 		"mob": {
-			"row": 2,
-			"cycle": ["enter", "north", "east", "south", "west", "damaged", "dying", "finish"],
-			"entity": ["first", "second"]
+			"row": 1,
+			"entity": ["first", "second"],
+			"cycle": ["enter", "north", "east", "south", "west", "damaged", "dying", "finish"]
 		},
 		"tower": {
 			"row": 4,
-			"cycle": ["enter", "north", "east", "south", "west", "idle", "leave"],
-			"entity": ["first", "second"]
+			"entity": ["first", "second"],
+			"cycle": ["enter", "north", "east", "south", "west", "idle", "leave"]
 		},
 		"lava": {
 			"row": 7,
-			"cycle": ["idle","opening","opened"],
-			"entity": ["lava"]
+			"entity": ["normal"],
+			"cycle": ["idle","opening","opened"]
 		},
 		"scene": {
 			"row": 9,
-			"cycle": ["idle"],
-			"entity": ["wall","furniture","floor"]
+			"entity": ["wall","furniture","floor"],
+			"cycle": ["idle"]
 		}
 	}
 }
