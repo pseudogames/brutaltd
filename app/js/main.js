@@ -6,8 +6,8 @@ import Grid from "./Grid";
 import Sprites from "./Sprites";
 import Render from "./Render";
 
-let grid = new Grid(new Vector(16,9,4));
-let sprites = new Sprites(new Vector(66,96));
+let grid = new Grid(new Vector(16,9,1));
+let sprites = new Sprites(new Vector(66,96), "sample");
 let render = new Render(grid, sprites,
 	new Ortho(
 		new Vector( 46.55, 17.88, 17.88),
@@ -16,4 +16,5 @@ let render = new Render(grid, sprites,
 	)
 );
 
-//window.setInterval(_ => render.draw(), 1000/30);
+setTimeout(_ => render.draw(), 200); // wait for load
+

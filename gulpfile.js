@@ -35,22 +35,28 @@ gulp.task('clean', function(){
 });
 
 function build() {
-	var html = gulp.src('app/index.html')
-			.pipe(gulp.dest('build'))
+	var html = gulp.src(['app/index.html'])
+			.pipe(gulp.dest('build'));
+
+	var sprite = gulp.src(['app/sprite/*'])
+			.pipe(gulp.dest('build/sprite'));
+
+	var level = gulp.src(['app/level/*'])
+			.pipe(gulp.dest('build/level'));
 
 	var js = gulp.src('app/js/main.js')
 			.pipe(plumber())
 			.pipe(webpack(require('./webpack.config.js')))
 			.pipe(gulp.dest('build/js'));
 
-	return merge(html, js);
+	return merge(html, sprite, level, js); // can't run on parallel with 'clean'
 }
 
 gulp.task('clean-build', ['clean'], build);
 gulp.task('build', build);
 
 gulp.task('watch', ['clean-build'], function () {
-	gulp.watch(['./app/index.html','./app/js/*.js'], ['build']);
+	gulp.watch(['./app/**'], ['build']);
 	gulp.watch(['./build/js/*.js'], ['reload']);
 });
 

@@ -1,0 +1,26 @@
+{
+	"name": "sample",
+	"frames_per_cycle": 3,
+	"group": {
+		"mob": {
+			"row": 2,
+			"cycle": ["enter", "north", "east", "south", "west", "damaged", "dying", "finish"],
+			"entity": ["first", "second"]
+		},
+		"tower": {
+			"row": 4,
+			"cycle": ["enter", "north", "east", "south", "west", "idle", "leave"],
+			"entity": ["first", "second"]
+		},
+		"lava": {
+			"row": 7,
+			"cycle": ["idle","opening","opened"],
+			"entity": ["lava"]
+		},
+		"scene": {
+			"row": 9,
+			"cycle": ["idle"],
+			"entity": ["wall","furniture","floor"]
+		}
+	}
+}

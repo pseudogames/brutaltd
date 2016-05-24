@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/bash -x
 
-npm install || exit 1
+test package.json -nt node_modules && { npm -d install || exit 1 ; }
 
 cd node_modules/.bin
 exec ./gulp "$@"

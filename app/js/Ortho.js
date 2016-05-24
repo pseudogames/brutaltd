@@ -9,11 +9,11 @@ export default class Ortho { // convert from 3D to orthogonal 2D
 		};
 	}
 
-	project(v : Vector) {
+	project(v : Vector) : Vector {
 		return new Vector(
-			v.x * this.axis.right.x + v.y * this.axis.front.x + v.z * this.axis.up.x,
-			v.x * this.axis.right.y + v.y * this.axis.front.y + v.z * this.axis.up.y,
-			v.x * this.axis.right.z + v.y * this.axis.front.z + v.z * this.axis.up.z
+			v.x * this.axis.right.x + v.y * this.axis.front.x + v.z * this.axis.up.x, // screen x
+			v.x * this.axis.right.y + v.y * this.axis.front.y + v.z * this.axis.up.y, // screen y
+			v.x * this.axis.right.z + v.y * this.axis.front.z + v.z * this.axis.up.z  // z-order
 		);
 	}
 

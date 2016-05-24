@@ -73,7 +73,7 @@ export default class Render {
 
 	rezoom() {
 		this.scroll_abs = Bounds.min(this.viewport.sub(this.bounds.size.scale(this.scale)), Vector.zero())
-		this.sprite = this.sprites.size.scale(this.scale);
+		this.cell = this.sprites.size.scale(this.scale);
 		this.draw();
 	}
 
@@ -86,7 +86,7 @@ export default class Render {
 		this.draw();
 	}
 
-	grid_to_canvas(grid_pos : Vector) {
+	grid_to_canvas(grid_pos : Vector) : Vector {
 		return this.projection.project(grid_pos)
 			.add(this.origin)
 			.scale(this.scale)
@@ -101,7 +101,15 @@ export default class Render {
 		let canvas_pos = this.grid_to_canvas(grid_pos);
 		this.queue.push({z: canvas_pos.z, f: _ => {
 			this.screen.fillStyle = color;
-			this.screen.fillRect(canvas_pos.x, canvas_pos.y, this.sprite.x, this.sprite.y);
+			this.screen.fillRect(canvas_pos.x, canvas_pos.y, this.cell.x, this.cell.y);
+		}});;
+	}
+
+	sprite(grid_pos : Vector, group : string, entity : string, cycle : string, frame : number) {
+		let canvas_pos = this.grid_to_canvas(grid_pos);
+		this.queue.push({z: canvas_pos.z, f: _ => {
+			let {img, rect:{x,y,w,h}} = this.sprites.get(group, entity, cycle, frame);
+			this.screen.drawImage(img, x,y,w,h, canvas_pos.x, canvas_pos.y, this.cell.x, this.cell.y);
 		}});;
 	}
 
@@ -116,7 +124,7 @@ export default class Render {
 		for(let z=0; z<this.grid.size.z; z++) {
 			for(let y=0; y<this.grid.size.y; y++) {
 				for(let x=0; x<this.grid.size.x; x++) {
-					this.plot(new Vector(x,y,z));
+					this.sprite(new Vector(x,y,z), "tower", "first", "idle", 0);
 				}
 			}
 		}

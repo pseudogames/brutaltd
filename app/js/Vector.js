@@ -7,7 +7,7 @@ export default class Vector {
 		this.z = z || 0; // Number
 	}
 
-	add(v) {
+	add(v) : Vector {
 		return new Vector(
 			this.x + v.x,
 			this.y + v.y,
@@ -15,7 +15,7 @@ export default class Vector {
 		);
 	}
 
-	sub(v) {
+	sub(v) : Vector {
 		return new Vector(
 			this.x - v.x,
 			this.y - v.y,
@@ -23,7 +23,7 @@ export default class Vector {
 		);
 	}
 
-	scale(a) {
+	scale(a) : Vector {
 		return new Vector(
 			this.x * a,
 			this.y * a,
@@ -31,7 +31,7 @@ export default class Vector {
 		);
 	}
 
-	floor() {
+	floor() : Vector {
 		return new Vector(
 			Math.floor(this.x),
 			Math.floor(this.y),
@@ -39,11 +39,11 @@ export default class Vector {
 		);
 	}
 
-	static zero() {
+	static zero() : Vector {
 		return new Vector(0,0,0);
 	}
 
-	toString() {
+	toString() : string {
 		return "" + this.x + "," + this.y + "," + this.z;
 	}
 }
