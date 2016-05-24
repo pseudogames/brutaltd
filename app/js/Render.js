@@ -129,7 +129,7 @@ export default class Render {
 			}
 		}
 
-		this.end();		
+		this.end();
 	}
 
 }
