@@ -3,7 +3,7 @@ import Vector from "./Vector";
 export default class Bounds {
 	// useful methods, but misleading if on Vector
 
-	static norm(a,b) {
+	static norm(a : Vector, b : Vector) {
 		return new Vector(
 			a.x / b.x,
 			a.y / b.y,
@@ -11,7 +11,7 @@ export default class Bounds {
 		);
 	}
 
-	static min(a,b) {
+	static min(a : Vector, b : Vector) {
 		return new Vector(
 			Math.min(a.x, b.x),
 			Math.min(a.y, b.y),
@@ -19,7 +19,7 @@ export default class Bounds {
 		);
 	}
 
-	static max(a,b) {
+	static max(a : Vector, b : Vector) {
 		return new Vector(
 			Math.max(a.x, b.x),
 			Math.max(a.y, b.y),

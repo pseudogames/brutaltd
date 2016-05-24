@@ -5,6 +5,10 @@ var gulp = require('gulp'),
 	exec = require('child_process').exec,
 	scp = require('gulp-scp2'),
 	fs = require('fs'),
+	clean = require('gulp-clean'),
+	webpack = require('webpack-stream'),
+	merge = require('merge-stream'),
+	plumber = require('gulp-plumber'),
 	connect = require('gulp-connect');
 
 gulp.task('connect', function() {
@@ -17,37 +21,40 @@ gulp.task('connect', function() {
 
 gulp.task('reload', function () {
 	gulp
-		.src('./build/*.html')
+		.src('./build/index.html')
 		.pipe(connect.reload())
 	;
 });
 
 
 gulp.task('clean', function(){
-	del.sync([ 'build/**' ]);
-});
-
-gulp.task('copy', function () {
-	gulp
-		.src('app/index.html')
-		.pipe(gulp.dest('build'))
+	return gulp
+		.src('build', {read: false})
+	    .pipe(clean())
 	;
 });
 
-gulp.task('watch', ['build'], function () {
+function build() {
+	var html = gulp.src('app/index.html')
+			.pipe(gulp.dest('build'))
+
+	var js = gulp.src('app/js/main.js')
+			.pipe(plumber())
+			.pipe(webpack(require('./webpack.config.js')))
+			.pipe(gulp.dest('build/js'));
+
+	return merge(html, js);
+}
+
+gulp.task('clean-build', ['clean'], build);
+gulp.task('build', build);
+
+gulp.task('watch', ['clean-build'], function () {
 	gulp.watch(['./app/index.html','./app/js/*.js'], ['build']);
 	gulp.watch(['./build/js/*.js'], ['reload']);
 });
 
-gulp.task('build', ['clean','copy'], function (next) {
-	exec('node node_modules/webpack/bin/webpack.js', function (err, stdout, stderr) {
-		console.log(stdout);
-		console.log(stderr);
-		next(err);
-	});
-});
-
-gulp.task('release', ['build'], function (next) {
+gulp.task('release', ['clean-build'], function (next) {
 	gulp
 		.src('build/**')
 		.pipe(scp({

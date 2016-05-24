@@ -1,10 +1,10 @@
 
 export default class Tween {
-	constructor(obj,key,change,fps) {
-		this.object = obj; // Object
-		this.key = key; // String
-		this.change = change; // Function
-		this.fps = fps || 30; // Number
+	constructor(obj : Object, key : string, change : Function, fps : number = 30) {
+		this.object = obj;
+		this.key = key;
+		this.change = change;
+		this.fps = fps;
 	}
 
 	cleanup() {
@@ -14,23 +14,22 @@ export default class Tween {
 		}
 	}
 
-	animate(target,factor,fps) {
+	animate(target : number, factor : number = 0.2) {
 		this.cleanup();
 
 		this.target = target;
 
 		var delay = 1000 / this.fps
-		var dest = factor || 0.2, src = 1-dest;
-		var that = this;
-		var tick = function() {
-			that.object[that.key] = that.object[that.key] * src + that.target * dest;
-			if(Math.abs(that.object[that.key] - that.target) < 0.01) {
-				that.object[that.key] = that.target;
-				that.timer = null;
+		var dest = factor, src = 1-dest;
+		var tick = _ => {
+			this.object[this.key] = this.object[this.key] * src + this.target * dest;
+			if(Math.abs(this.object[this.key] - this.target) < 0.01) {
+				this.object[this.key] = this.target;
+				this.timer = null;
 			} else {
-				that.timer = setTimeout(tick, delay);
+				this.timer = setTimeout(tick, delay);
 			}
-			that.change();
+			this.change();
 		};
 		tick();
 	}

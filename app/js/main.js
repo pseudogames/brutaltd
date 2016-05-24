@@ -12,9 +12,9 @@ let grid = new Grid(new Vector(32,32,4));
 let sprites = new Sprites(new Vector(66,96));
 let render = new Render(grid, sprites,
 	new Ortho(
-		new Vector( 46.55, 17.88),
-		new Vector(-18.44, 45.00),
-		new Vector(  0   ,-31.55)
+		new Vector( 46.55, 17.88, 17.88),
+		new Vector(-18.44, 45.00, 45.00),
+		new Vector(  0   ,-31.55,  0.1 )
 	)
 );
 
@@ -38,13 +38,14 @@ class App {
 			this.wave.push(new Enemy(this.level.path));
 		}
 
-		render.clear();
+		render.begin();
 		for(let e of this.wave) {
 			if(!e.completed_path) {
 				e.move(delta);
 				render.plot(e.position, "#EC0000");
 			}
 		}
+		render.end();
 
 		this.raf = requestAnimationFrame( ()=> this.main() );
 		this.then = this.now;

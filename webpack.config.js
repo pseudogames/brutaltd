@@ -22,7 +22,13 @@ module.exports = {
 				include: path.join(__dirname, 'app/js'),
 				loader: 'babel-loader',
 				query: {
-					plugins: ["transform-runtime","transform-es2015-classes"],
+					plugins: [
+						"transform-runtime",
+						"transform-es2015-classes",
+						"typecheck",
+						"syntax-flow",
+						"transform-flow-strip-types"
+					],
 					presets: ["es2015"],
 				}
 			}
