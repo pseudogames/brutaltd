@@ -1,13 +1,16 @@
 import Vector from "./Vector";
 import Bounds from "./Bounds";
 import Tween from "./Tween";
+import Grid from "./Grid";
+import Sprites from "./Sprites";
+import Ortho from "./Ortho";
 
 export default class Render {
 
-	constructor(grid,sprites,projection) {
-		this.grid = grid; // Grid
-		this.sprites = sprites; // Sprites
-		this.projection = projection; // Ortho
+	constructor(grid : Grid, sprites : Sprites, projection : Ortho) {
+		this.grid = grid;
+		this.sprites = sprites;
+		this.projection = projection;
 		this.canvas = document.createElement("canvas");
 		this.screen = this.canvas.getContext("2d");
 		document.body.appendChild(this.canvas);
@@ -78,23 +81,22 @@ export default class Render {
 		this.scaler.animate(this.scaler.target == this.scale_in ? this.scale_out : this.scale_in);
 	}
 
-	scroll(y) {
+	scroll(y : number) {
 		this.scroll_rel = Math.max(0,Math.min(1,this.scroll_rel + Math.sign(y)/8));
 		this.draw();
 	}
 
-	grid_to_canvas(grid_pos) {
+	grid_to_canvas(grid_pos : Vector) {
 		return this.projection.project(grid_pos)
 			.add(this.origin)
 			.scale(this.scale)
 			.add(this.scroll_abs.scale(this.scroll_rel));
 	}
 
-	plot(grid_pos, color) {
+	plot(grid_pos : Vector, color : string = "rgb("+Bounds.norm(grid_pos,this.grid.size).scale(255).floor().toString()+")") {
 		let canvas_pos = this.grid_to_canvas(grid_pos);
-		if(!color) color = "rgb("+Bounds.norm(grid_pos,this.grid.size).scale(255).floor().toString()+")";
 		this.screen.fillStyle = color;
-		this.screen.fillRect(canvas_pos.x, canvas_pos.y, 3,3);
+		this.screen.fillRect(canvas_pos.x, canvas_pos.y, 3, 3);
 	}
 
 	draw() {

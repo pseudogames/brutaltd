@@ -1,7 +1,8 @@
+import Vector from "./Vector";
 
 export default class Grid {
-	constructor(size) {
-		this.size = size; // Vector
+	constructor(size : Vector) {
+		this.size = size;
 	}
 }
 
