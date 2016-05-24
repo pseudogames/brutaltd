@@ -5,16 +5,9 @@ const limiter = {
 	[1]  : Math.min
 }
 
-let counter = 0;
-
-export default class Enemy {
+export default class Walker {
 	constructor(path_instructions : Array<Vector> = [new Vector()]) {
-		this.id = ++counter;
-
-		console.log(`#${this.id} A new Enemy has come to life`);
-
 		this.position = new Vector(0,0,0);
-
 		this.speed = 15;
 		this.path_instructions = path_instructions;
 		this.current_instruction = -1;
@@ -39,13 +32,9 @@ export default class Enemy {
 				this.next_instruction();
 			}
 		}
-
-		console.log(`#${this.id} Enemy.move current position: ${this.position.x},${this.position.y}`);
 	}
 
 	next_instruction() {
-		console.log(`#${this.id} Enemy.move.next_instruction`);
-
 		this.current_instruction++;
 
 		let {x : nx, y : ny} = this.path_instructions[this.current_instruction];

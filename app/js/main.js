@@ -1,7 +1,6 @@
 'use strict';
 
-import Enemy from "./Enemy";
-
+import Walker from "./Walker";
 import Vector from "./Vector";
 import Ortho from "./Ortho";
 import Grid from "./Grid";
@@ -35,7 +34,7 @@ class App {
 
 		if(this.time_elapsed > 400 && this.wave.length < 10) {
 			this.time_elapsed = 0;
-			this.wave.push(new Enemy(this.level.path));
+			this.wave.push(new Walker(this.level.path));
 		}
 
 		render.begin();
@@ -86,5 +85,5 @@ class Level {
 	}
 }
 
-const app = new App(new Level());
-app.start();
+// const app = new App(new Level());
+// app.start();
