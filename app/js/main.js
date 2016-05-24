@@ -17,4 +17,3 @@ let render = new Render(grid, sprites,
 );
 
 //window.setInterval(_ => render.draw(), 1000/30);
-

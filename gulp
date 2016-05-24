@@ -1,4 +1,6 @@
 #!/bin/bash
 
+npm install || exit 1
+
 cd node_modules/.bin
 exec ./gulp "$@"
