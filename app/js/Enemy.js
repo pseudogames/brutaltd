@@ -8,7 +8,7 @@ const limiter = {
 let counter = 0;
 
 export default class Enemy {
-	constructor(path_instructions = [0,0]) {
+	constructor(path_instructions : Array<Vector> = [new Vector()]) {
 		this.id = ++counter;
 
 		console.log(`#${this.id} A new Enemy has come to life`);
@@ -25,7 +25,7 @@ export default class Enemy {
 	move(amount) {
 		if(this.completed_path === true) return;
 
-		let [nx,ny]      = this.path_instructions[this.current_instruction];
+		let {x : nx, y : ny} = this.path_instructions[this.current_instruction];
 		let {x,y}        = this.position;
 		let moved_amount = this.speed * amount;
 
@@ -48,8 +48,8 @@ export default class Enemy {
 
 		this.current_instruction++;
 
-		let [nx,ny] = this.path_instructions[this.current_instruction];
-		let {x,y}   = this.position;
+		let {x : nx, y : ny} = this.path_instructions[this.current_instruction];
+		let {x,y}        = this.position;
 
 		this.x_direction = Math.sign(x-nx) * -1;
 		this.y_direction = Math.sign(y-ny) * -1;
