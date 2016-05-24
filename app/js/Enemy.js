@@ -5,9 +5,13 @@ const limiter = {
 	[1]  : Math.min
 }
 
+let counter = 0;
+
 export default class Enemy {
 	constructor(path_instructions = [0,0]) {
-		console.log("A new Enemy has come to life");
+		this.id = ++counter;
+
+		console.log(`#${this.id} A new Enemy has come to life`);
 
 		this.position = new Vector(0,0,0);
 
@@ -36,11 +40,11 @@ export default class Enemy {
 			}
 		}
 
-		console.log(`Enemy.move current position: ${this.position.x},${this.position.y}`);
+		console.log(`#${this.id} Enemy.move current position: ${this.position.x},${this.position.y}`);
 	}
 
 	next_instruction() {
-		console.log(`Enemy.move.next_instruction`);
+		console.log(`#${this.id} Enemy.move.next_instruction`);
 
 		this.current_instruction++;
 

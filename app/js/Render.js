@@ -97,6 +97,10 @@ export default class Render {
 		this.screen.fillRect(canvas_pos.x, canvas_pos.y, 3,3);
 	}
 
+	clear() {
+		this.screen.clearRect(0, 0, this.viewport.x, this.viewport.y);
+	}
+
 	draw() {
 		this.screen.clearRect(0, 0, this.viewport.x, this.viewport.y);
 		for(let z=0; z<this.grid.size.z; z++) {
