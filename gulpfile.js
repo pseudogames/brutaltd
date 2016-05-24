@@ -8,6 +8,7 @@ var gulp = require('gulp'),
 	clean = require('gulp-clean'),
 	webpack = require('webpack-stream'),
 	merge = require('merge-stream'),
+	plumber = require('gulp-plumber'),
 	connect = require('gulp-connect');
 
 gulp.task('connect', function() {
@@ -38,6 +39,7 @@ function build() {
 			.pipe(gulp.dest('build'))
 
 	var js = gulp.src('app/js/main.js')
+			.pipe(plumber())
 			.pipe(webpack(require('./webpack.config.js')))
 			.pipe(gulp.dest('build/js'));
 

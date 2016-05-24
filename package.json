@@ -38,6 +38,7 @@
     "gulp-exec": "^2.1.2",
 	"gulp-scp2": "^0.2.0",
 	"gulp-clean": "^0.3.2",
+	"gulp-plumber": "^1.1.0",
 	"webpack-stream": "^3.2.0",
 	"merge-stream": "^1.0.0",
     "webpack": "^1.13.0",
