@@ -74,6 +74,7 @@ export default class Render {
 
 	rezoom() {
 		this.scroll_abs = Bounds.min(this.viewport.sub(this.bounds.size.scale(this.scale)), Vector.zero())
+		this.sprite = this.sprites.size.scale(this.scale);
 		this.draw();
 	}
 
@@ -93,10 +94,10 @@ export default class Render {
 			.add(this.scroll_abs.scale(this.scroll_rel));
 	}
 
-	plot(grid_pos : Vector, color : string = "rgb("+Bounds.norm(grid_pos,this.grid.size).scale(255).floor().toString()+")") {
+	plot(grid_pos : Vector, color : string = "rgba("+Bounds.norm(grid_pos,this.grid.size).scale(255).floor().toString()+",0.2)") {
 		let canvas_pos = this.grid_to_canvas(grid_pos);
 		this.screen.fillStyle = color;
-		this.screen.fillRect(canvas_pos.x, canvas_pos.y, 3, 3);
+		this.screen.fillRect(canvas_pos.x, canvas_pos.y, this.sprite.x, this.sprite.y);
 	}
 
 	draw() {
