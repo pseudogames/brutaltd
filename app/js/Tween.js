@@ -21,16 +21,15 @@ export default class Tween {
 
 		var delay = 1000 / this.fps
 		var dest = factor, src = 1-dest;
-		var that = this;
-		var tick = function() {
-			that.object[that.key] = that.object[that.key] * src + that.target * dest;
-			if(Math.abs(that.object[that.key] - that.target) < 0.01) {
-				that.object[that.key] = that.target;
-				that.timer = null;
+		var tick = _ => {
+			this.object[this.key] = this.object[this.key] * src + this.target * dest;
+			if(Math.abs(this.object[this.key] - this.target) < 0.01) {
+				this.object[this.key] = this.target;
+				this.timer = null;
 			} else {
-				that.timer = setTimeout(tick, delay);
+				this.timer = setTimeout(tick, delay);
 			}
-			that.change();
+			this.change();
 		};
 		tick();
 	}

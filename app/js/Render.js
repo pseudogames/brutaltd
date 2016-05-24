@@ -15,14 +15,13 @@ export default class Render {
 		this.screen = this.canvas.getContext("2d");
 		document.body.appendChild(this.canvas);
 
-		var that = this;
 		this.scroll_rel = 0.5;
-		this.scaler = new Tween(this, "scale", _ => that.rezoom());
+		this.scaler = new Tween(this, "scale", _ => this.rezoom());
 		this.resize();
 
-		this.resizer = _ => that.resize();
-		this.zoomer = e => e.button == 1 && that.zoom();
-		this.scroller = e => that.scroll(e.deltaY);
+		this.resizer = _ => this.resize();
+		this.zoomer = e => e.button == 1 && this.zoom();
+		this.scroller = e => this.scroll(e.deltaY);
 		window.addEventListener('resize', this.resizer);
 		window.addEventListener('click', this.zoomer);
 		window.addEventListener('wheel', this.scroller);
@@ -94,14 +93,26 @@ export default class Render {
 			.add(this.scroll_abs.scale(this.scroll_rel));
 	}
 
-	plot(grid_pos : Vector, color : string = "rgba("+Bounds.norm(grid_pos,this.grid.size).scale(255).floor().toString()+",0.2)") {
+	begin() {
+		this.queue = [];
+	}
+
+	plot(grid_pos : Vector, color : string = "rgba("+Bounds.norm(grid_pos,this.grid.size).scale(255).floor().toString()+",0.5)") {
 		let canvas_pos = this.grid_to_canvas(grid_pos);
-		this.screen.fillStyle = color;
-		this.screen.fillRect(canvas_pos.x, canvas_pos.y, this.sprite.x, this.sprite.y);
+		this.queue.push({z: canvas_pos.z, f: _ => {
+			this.screen.fillStyle = color;
+			this.screen.fillRect(canvas_pos.x, canvas_pos.y, this.sprite.x, this.sprite.y);
+		}});;
+	}
+
+	end() {
+		this.screen.clearRect(0, 0, this.viewport.x, this.viewport.y);
+		this.queue.sort((a,b) => a.z - b.z).forEach(d => d.f());
 	}
 
 	draw() {
-		this.screen.clearRect(0, 0, this.viewport.x, this.viewport.y);
+		this.begin();
+
 		for(let z=0; z<this.grid.size.z; z++) {
 			for(let y=0; y<this.grid.size.y; y++) {
 				for(let x=0; x<this.grid.size.x; x++) {
@@ -109,6 +120,8 @@ export default class Render {
 				}
 			}
 		}
+
+		this.end();		
 	}
 
 }
