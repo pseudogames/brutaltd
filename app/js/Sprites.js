@@ -8,7 +8,7 @@ export default class Sprites {
 		Loader.json("sprite/"+id+".json", json => this.info = json);
 	}
 
-	get(group : string, entity : string, state : string, frame : number) : Object {
+	get(entity : string, state : string, frame : number) : Object {
 		if(!this.img || !this.info) {
 			return {img: Sprites.empty, rect: {x:0,y:0,w:1,h:1}};
 		}

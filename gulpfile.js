@@ -41,15 +41,15 @@ function build() {
 	var sprite = gulp.src(['app/sprite/*'])
 			.pipe(gulp.dest('build/sprite'));
 
-	var level = gulp.src(['app/level/*'])
-			.pipe(gulp.dest('build/level'));
+	var grid = gulp.src(['app/grid/*'])
+			.pipe(gulp.dest('build/grid'));
 
 	var js = gulp.src('app/js/main.js')
 			.pipe(plumber())
 			.pipe(webpack(require('./webpack.config.js')))
 			.pipe(gulp.dest('build/js'));
 
-	return merge(html, sprite, level, js); // can't run on parallel with 'clean'
+	return merge(html, sprite, grid, js); // can't run on parallel with 'clean'
 }
 
 gulp.task('clean-build', ['clean'], build);

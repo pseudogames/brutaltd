@@ -105,10 +105,10 @@ export default class Render {
 		}});;
 	}
 
-	sprite(grid_pos : Vector, group : string, entity : string, cycle : string, frame : number) {
+	sprite(grid_pos : Vector, string, entity : string, cycle : string, frame : number) {
 		let canvas_pos = this.grid_to_canvas(grid_pos);
 		this.queue.push({z: canvas_pos.z, f: _ => {
-			let {img, rect:{x,y,w,h}} = this.sprites.get(group, entity, cycle, frame);
+			let {img, rect:{x,y,w,h}} = this.sprites.get(entity, cycle, frame);
 			this.screen.drawImage(img, x,y,w,h, canvas_pos.x, canvas_pos.y, this.cell.x, this.cell.y);
 		}});;
 	}
