@@ -2,6 +2,20 @@ import Vector from "./Vector";
 import Loader from "./Loader";
 
 export default class Sprites {
+
+	static create(id : string) {
+		Loader.image("sprite/"+id+".png", img => this.img = img);
+		Loader.json("sprite/"+id+".json", json => this.info = json);
+
+		// return new Promise(
+		// 	function (resolve, reject) {
+		// 		resolve(value);
+		// 		reject(error);
+		// 	}
+		// );
+
+	}
+
 	constructor(size : Vector, id : string) {
 		this.size = size;
 		Loader.image("sprite/"+id+".png", img => this.img = img);

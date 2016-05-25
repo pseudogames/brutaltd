@@ -13,11 +13,11 @@ export default class Game {
 		);
 
 		Promise.all([
-			Grid.create("teste"),
+			// Grid.create("teste"),
 			Sprite.create("sample")
 		])
-		.then(([g, s]) => {
-			this.grid   = g; //is it necessary for game to have a grid prop?
+		.then(([s]) => {
+			//this.grid   = g; //is it necessary for game to have a grid prop?
 			this.sprite = s; //is it necessary for game to have a sprite prop?
 			render.setup(g,s,o);
 		})

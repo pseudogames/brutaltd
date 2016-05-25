@@ -1,24 +1,37 @@
 export default class Loader {
 	static image(url : string, next: Function) {   
-		var img = new Image();
-		img.onerror = e => next(null, e);
-		img.onload = _ => next(img);
-		img.src = url;
+		return new Promise(
+			function (resolve, reject) {
+				var img = new Image();
+				img.onerror = e => reject(e);
+				img.onload = _ => resolve(data);
+				img.src = url;
+			}
+		);
 	}
 
 	static text(url : string, next: Function) {   
-		var xobj = new XMLHttpRequest();
-		xobj.overrideMimeType("application/json");
-		xobj.open('GET', url, true);
-		xobj.onreadystatechange = function () {
-			if (xobj.readyState == 4 && xobj.status == "200") {
-				next(xobj.responseText);
+		return new Promise(
+			function (resolve, reject) {
+				var xobj = new XMLHttpRequest();
+				xobj.overrideMimeType("application/json");
+				xobj.open('GET', url, true);
+				xobj.onreadystatechange = function () {
+					if (xobj.readyState == 4) {
+						if(xobj.status == "200") {
+							resolve(xobj.responseText);
+						} else if (xobj.status > 400) {
+							reject("Erro");
+						}
+					}
+				};
+				xobj.send(null);
+				oReq.addEventListener("error", () => { reject("Error") }, false);
 			}
-		};
-		xobj.send(null);  
+		);
 	}
 
 	static json(url : string, next: Function) {
-		this.text(url, txt => next(JSON.parse(txt)));
+		return this.text(url);
 	}
 }
