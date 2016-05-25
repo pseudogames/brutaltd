@@ -7,24 +7,34 @@ import Ortho from "./Ortho";
 
 export default class Render {
 
-	constructor(grid : Grid, sprites : Sprites, projection : Ortho) {
-		this.grid = grid;
-		this.sprites = sprites;
-		this.projection = projection;
+	constructor() {
 		this.canvas = document.createElement("canvas");
 		this.screen = this.canvas.getContext("2d");
 		document.body.appendChild(this.canvas);
+	}
+
+	setup(grid : Grid, sprites : Sprites, projection : Ortho) {
+		this.grid = grid;
+		this.sprites = sprites;
+		this.projection = projection;
 
 		this.scroll_rel = 0.5;
 		this.scaler = new Tween(this, "scale", _ => this.rezoom());
+
+		this.cleanup();
+
 		this.resize();
 
 		this.resizer = _ => this.resize();
 		this.zoomer = e => e.button == 1 && this.zoom();
 		this.scroller = e => this.scroll(e.deltaY);
+
+
 		window.addEventListener('resize', this.resizer);
 		window.addEventListener('click', this.zoomer);
 		window.addEventListener('wheel', this.scroller);
+
+		return this;
 	}
 
 	cleanup() {

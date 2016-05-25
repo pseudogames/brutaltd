@@ -2,24 +2,29 @@ import Vector from "./Vector";
 import Loader from "./Loader";
 
 export default class Sprites {
-
-	static create(id : string) {
-		Loader.image("sprite/"+id+".png", img => this.img = img);
-		Loader.json("sprite/"+id+".json", json => this.info = json);
-
-		// return new Promise(
-		// 	function (resolve, reject) {
-		// 		resolve(value);
-		// 		reject(error);
-		// 	}
-		// );
-
+	static create(size : Vector, id : string) {
+		return new Promise(
+			function (resolve, reject) {
+				Promise.all([
+					Loader.image("sprite/"+id+".png"),
+					Loader.json("sprite/"+id+".json")
+				])
+				.then(
+					([img, json]) => {
+						resolve(new Sprites(size, img, JSON.parse(json)));
+					},
+					(error) => {
+						reject(error)
+					}
+				);
+			}
+		);
 	}
 
-	constructor(size : Vector, id : string) {
+	constructor(size : Vector, img : Object, info : Object) {
 		this.size = size;
-		Loader.image("sprite/"+id+".png", img => this.img = img);
-		Loader.json("sprite/"+id+".json", json => this.info = json);
+		this.img = img;
+		this.info = info;
 	}
 
 	get(entity : string, state : string, frame : number) : Object {

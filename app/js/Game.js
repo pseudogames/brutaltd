@@ -1,10 +1,17 @@
+import Walker from "./Walker";
+import Vector from "./Vector";
+import Ortho from "./Ortho";
+import Grid from "./Grid";
+import Sprites from "./Sprites";
+import Render from "./Render";
+
 export default class Game {
 	constructor() {
 		console.log(`There's a new game in town`);
-
 		this.render = new Render();
+		return this;
 	}
-	start() {
+	start(sprite_name : string, grid_name : string) {
 		//temporary
 		let o = new Ortho(
 			new Vector( 46.55, 17.88, 17.88),
@@ -12,17 +19,19 @@ export default class Game {
 			new Vector(  0   ,-31.55,  0.1 )
 		);
 
-		Promise.all([
-			// Grid.create("teste"),
-			Sprite.create("sample")
-		])
-		.then(([s]) => {
-			//this.grid   = g; //is it necessary for game to have a grid prop?
-			this.sprite = s; //is it necessary for game to have a sprite prop?
-			render.setup(g,s,o);
-		})
-		.catch(err => {
-			//deal with it
-		});
+		Promise
+			.all([
+				Sprites.create(new Vector(66,96), sprite_name),
+				Grid.create(new Vector(16,9,1), grid_name)
+			])
+			.then( ([s, g]) => {
+				this.sprites = s;
+				this.grid    = g;
+				this.render.setup(g,s,o);
+				this.render.draw();
+			})
+			.catch(err => {
+				console.log(`Game.start err`, err);
+			});
 	}
 }

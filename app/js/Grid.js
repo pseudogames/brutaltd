@@ -2,9 +2,27 @@ import Vector from "./Vector";
 import Loader from "./Loader";
 
 export default class Grid {
-	constructor(size : Vector, id : string) {
+
+	static create(size : Vector, id : string) {
+		return new Promise(
+			function (resolve, reject) {
+				Loader
+					.json("grid/"+id+".json")
+					.then(
+						(json) => {
+							resolve(new Grid(size, JSON.parse(json)));
+						},
+						(error) => {
+							reject(error);
+						}
+				);
+			}
+		);
+	}
+
+	constructor(size : Vector, info : Object) {
 		this.size = size;
-		Loader.json("grid/"+id+".json", json => this.info = json);
+		this.info = info;
 	}
 
 	get(p : Vector) {

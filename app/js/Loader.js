@@ -1,16 +1,16 @@
 export default class Loader {
-	static image(url : string, next: Function) {   
+	static image(url : string) {
 		return new Promise(
 			function (resolve, reject) {
 				var img = new Image();
 				img.onerror = e => reject(e);
-				img.onload = _ => resolve(data);
+				img.onload = _ => resolve(img);
 				img.src = url;
 			}
 		);
 	}
 
-	static text(url : string, next: Function) {   
+	static text(url : string) {
 		return new Promise(
 			function (resolve, reject) {
 				var xobj = new XMLHttpRequest();
@@ -26,12 +26,12 @@ export default class Loader {
 					}
 				};
 				xobj.send(null);
-				oReq.addEventListener("error", () => { reject("Error") }, false);
+				xobj.addEventListener("error", () => { reject("Error") }, false);
 			}
 		);
 	}
 
-	static json(url : string, next: Function) {
+	static json(url : string) {
 		return this.text(url);
 	}
 }
