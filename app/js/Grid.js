@@ -23,6 +23,7 @@ export default class Grid {
 	constructor(size : Vector, info : Object) {
 		this.size = size;
 		this.info = info;
+		this.path = this.info.path.map( (a) => new Vector(...a) )
 	}
 
 	get(p : Vector) {

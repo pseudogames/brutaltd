@@ -7,38 +7,49 @@ const limiter = {
 
 export default class Walker {
 	constructor(path_instructions : Array<Vector> = [new Vector()]) {
-		this.position = new Vector(0,0,0);
-		this.speed = 15;
+		this.position = path_instructions.shift();
+		this.speed = 1;
 		this.path_instructions = path_instructions;
-		this.current_instruction = -1;
 		this.next_instruction();
 		this.completed_path = false;
 	}
 
 	move(amount) {
-		if(this.completed_path === true) return;
+		if(this.completed_path === true || this.current_instruction == undefined) return;
 
-		let {x : nx, y : ny} = this.path_instructions[this.current_instruction];
+		console.log(`amount ${amount}`);
+		let {x : nx, y : ny} = this.current_instruction;
+		console.log(`nx ${nx} ny ${ny}`);
+		console.log(`this.position`, this.position);
 		let {x,y}        = this.position;
+		console.log(`x ${x} y ${y}`);
 		let moved_amount = this.speed * amount;
+		console.log(`moved_amount ${moved_amount}`);
 
 		this.position.x = this.limit(this.x_direction, moved_amount, x, nx);
 		this.position.y = this.limit(this.y_direction, moved_amount, y, ny);
 
 		if(this.position.x == nx && this.position.y == ny) {
-			if(this.current_instruction == this.path_instructions.length -1) {
-				this.completed_path = true;
-			} else {
-				this.next_instruction();
-			}
+			this.next_instruction();
 		}
 	}
 
 	next_instruction() {
-		this.current_instruction++;
 
-		let {x : nx, y : ny} = this.path_instructions[this.current_instruction];
+		if(this.path_instructions.length == 0)  {
+			this.completed_path = true;
+			return;
+		}
+
+		this.current_instruction = this.path_instructions.shift();
+
+		console.log("this.current_instruction", this.current_instruction);
+
+		let {x : nx, y : ny} = this.current_instruction;
+		console.log(`nx ${nx} ny ${ny}`);
+		console.log(`this.position`, this.position);
 		let {x,y}        = this.position;
+		console.log(`x ${x} y ${y}`);
 
 		this.x_direction = Math.sign(x-nx) * -1;
 		this.y_direction = Math.sign(y-ny) * -1;

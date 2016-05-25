@@ -16,6 +16,7 @@ export default class Render {
 		this.grid = grid;
 		this.sprites = sprites;
 		this.projection = this.sprites.projection;
+		this.queue = [];
 
 		this.scroll_rel = 0.5;
 		this.scaler = new Tween(this, "scale", _ => this.rezoom());
@@ -83,7 +84,7 @@ export default class Render {
 	rezoom() {
 		this.scroll_abs = Bounds.min(this.viewport.sub(this.bounds.size.scale(this.scale)), Vector.zero())
 		this.cell = this.sprites.size.scale(this.scale);
-		this.draw();
+		this.begin(); this.draw(); this.end();
 	}
 
 	zoom() {
@@ -92,7 +93,7 @@ export default class Render {
 
 	scroll(y : number) {
 		this.scroll_rel = Math.max(0,Math.min(1,this.scroll_rel + Math.sign(y)/8));
-		this.draw();
+		this.begin(); this.draw(); this.end();
 	}
 
 	grid_to_canvas(grid_pos : Vector) : Vector {
@@ -129,7 +130,7 @@ export default class Render {
 	}
 
 	draw() {
-		this.begin();
+		// this.begin();
 
 		for(let y=0; y<this.grid.size.y; y++) {
 			for(let x=0; x<this.grid.size.x; x++) {
@@ -138,7 +139,7 @@ export default class Render {
 			}
 		}
 
-		this.end();
+		// this.end();
 	}
 
 }
