@@ -1,4 +1,3 @@
-
 export default class Vector {
 
 	constructor(x,y,z) {

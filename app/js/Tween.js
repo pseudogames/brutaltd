@@ -1,4 +1,3 @@
-
 export default class Tween {
 	constructor(obj : Object, key : string, change : Function, fps : number = 30) {
 		this.object = obj;

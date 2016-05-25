@@ -3,7 +3,6 @@ import Bounds from "./Bounds";
 import Tween from "./Tween";
 import Grid from "./Grid";
 import Sprites from "./Sprites";
-import Ortho from "./Ortho";
 
 export default class Render {
 
@@ -16,13 +15,7 @@ export default class Render {
 	setup(grid : Grid, sprites : Sprites) {
 		this.grid = grid;
 		this.sprites = sprites;
-
-		let projection = this.sprites.info.projection;
-		this.projection = new Ortho(
-			new Vector(...projection[0]),
-			new Vector(...projection[1]),
-			new Vector(...projection[2])
-		);
+		this.projection = this.sprites.projection;
 
 		this.scroll_rel = 0.5;
 		this.scaler = new Tween(this, "scale", _ => this.rezoom());

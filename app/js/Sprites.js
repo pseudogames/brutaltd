@@ -1,5 +1,6 @@
 import Vector from "./Vector";
 import Loader from "./Loader";
+import Ortho  from "./Ortho";
 
 export default class Sprites {
 	static create(size : Vector, id : string) {
@@ -23,8 +24,14 @@ export default class Sprites {
 
 	constructor(size : Vector, img : Object, info : Object) {
 		this.size = size;
-		this.img = img;
+		this.img  = img;
 		this.info = info;
+		//TODO: CHECK INFO BEFORE TRY TO INSTANTIATE
+		this.projection = new Ortho(
+			new Vector(...this.info.projection[0]),
+			new Vector(...this.info.projection[1]),
+			new Vector(...this.info.projection[2])
+		);
 	}
 
 	get(entity : string, state : string, frame : number) : Object {
