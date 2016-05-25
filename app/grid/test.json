@@ -5,12 +5,12 @@
 		[15,4,0]
 	],
 	"sprites": {
-		"#": "wall",
-		"o": "furniture",
-		"_": "floor",
-		"~": "lava"
+		"#": ["wall"],
+		"o": ["floor","furniture"],
+		"_": ["floor"],
+		"~": ["lava"]
 	},
-	"scene": [
+	"base": [
 		"################",
 		"#oo_oo___oo__oo#",
 		"#__~~~~~~~~~~__#",

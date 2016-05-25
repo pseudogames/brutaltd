@@ -33,10 +33,8 @@ export default class Sprites {
 					}
 				}
 			}
-			console.log(this.index);
 		}
 
-		console.log(entity);
 		if(!this.index[entity] || !this.index[entity][state] || !this.index[entity][state][frame])
 			return Sprites.dummy;
 		return {img: this.img, rect: this.index[entity][state][frame]};

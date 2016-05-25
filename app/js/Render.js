@@ -98,7 +98,7 @@ export default class Render {
 	}
 
 	plot(grid_pos : Vector, color : string = "rgba("+Bounds.norm(grid_pos,this.grid.size).scale(255).floor().toString()+",0.5)") {
-		let canvas_pos = this.grid_to_canvas(grid_pos);
+		let canvas_pos = this.grid_to_canvas(grid_pos).floor();
 		this.queue.push({z: canvas_pos.z, f: _ => {
 			this.screen.fillStyle = color;
 			this.screen.fillRect(canvas_pos.x, canvas_pos.y, this.cell.x, this.cell.y);
@@ -106,7 +106,7 @@ export default class Render {
 	}
 
 	sprite(grid_pos : Vector, entity : string, state : string, frame : number) {
-		let canvas_pos = this.grid_to_canvas(grid_pos);
+		let canvas_pos = this.grid_to_canvas(grid_pos).floor();
 		this.queue.push({z: canvas_pos.z, f: _ => {
 			let r = this.sprites.get(entity, state, frame);
 			let {img, rect:{x,y,w,h}} = r;
@@ -125,8 +125,7 @@ export default class Render {
 		for(let y=0; y<this.grid.size.y; y++) {
 			for(let x=0; x<this.grid.size.x; x++) {
 				let p = new Vector(x,y,0);
-				let e = this.grid.get(p);
-				if(e) this.sprite(p, e, "enter", 0);
+				this.grid.get(p).forEach(e => this.sprite(p, e, "enter", 0));
 			}
 		}
 

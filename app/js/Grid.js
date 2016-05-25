@@ -8,19 +8,19 @@ export default class Grid {
 	}
 
 	get(p : Vector) {
-		if(!this.info) return "";
+		if(!this.info) return [];
 
-		if(!this.scene) {
-			this.scene = [];
+		if(!this.base) {
+			this.base = [];
 			for(let y=0; y<this.info.size[1]; y++) {
-				this.scene[y] = [];
+				this.base[y] = [];
 				for(let x=0; x<this.info.size[0]; x++) {
-					this.scene[y][x] = this.info.sprites[this.info.scene[y][x]]
+					this.base[y][x] = this.info.sprites[this.info.base[y][x]]
 				}
 			}
 		}
 		
-		return this.scene[p.y][p.x];
+		return this.base[p.y][p.x];
 	}
 }
 
