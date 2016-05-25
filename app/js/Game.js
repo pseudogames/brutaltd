@@ -27,7 +27,7 @@ export default class Game {
 			.then( ([s, g]) => {
 				this.sprites = s;
 				this.grid    = g;
-				this.render.setup(g,s,o);
+				this.render.setup(g,s);
 				this.render.draw();
 			})
 			.catch(err => {

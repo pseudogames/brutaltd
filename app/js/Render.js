@@ -13,10 +13,16 @@ export default class Render {
 		document.body.appendChild(this.canvas);
 	}
 
-	setup(grid : Grid, sprites : Sprites, projection : Ortho) {
+	setup(grid : Grid, sprites : Sprites) {
 		this.grid = grid;
 		this.sprites = sprites;
-		this.projection = projection;
+
+		let projection = this.sprites.info.projection;
+		this.projection = new Ortho(
+			new Vector(...projection[0]),
+			new Vector(...projection[1]),
+			new Vector(...projection[2])
+		);
 
 		this.scroll_rel = 0.5;
 		this.scaler = new Tween(this, "scale", _ => this.rezoom());
