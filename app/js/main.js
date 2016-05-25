@@ -9,7 +9,7 @@ import Render from "./Render";
 import Game from "./Game";
 
 
-let grid = new Grid(new Vector(16,9,1));
+let grid = new Grid(new Vector(16,9,1), "test");
 let sprites = new Sprites(new Vector(66,96), "sample");
 let render = new Render(grid, sprites,
 	new Ortho(
@@ -19,7 +19,7 @@ let render = new Render(grid, sprites,
 	)
 );
 
-setTimeout(_ => render.draw(), 200); // wait for load
+setTimeout(_ => render.draw(), 500); // wait for load
 
 const BrutalTD = new Game();
 
