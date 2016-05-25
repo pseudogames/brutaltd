@@ -1,0 +1,28 @@
+{
+	"level": [
+		{
+			"sprites": "sample",
+			"grid": "test",
+			"wave": [
+				[5, "mob1"],
+				[10, "mob1"],
+				[15, "mob1"],
+				[5, "mob2"],
+				[10, "mob2"]
+			]
+		},
+		{
+			"sprites": "sample",
+			"grid": "test",
+			"wave": [
+				[10, "mob1"],
+				[10, "mob1"],
+				[10, "mob1"],
+				[10, "mob2"],
+				[15, "mob1"],
+				[10, "mob2"],
+				[20, "mob1"]
+			]
+		}
+	]
+}
