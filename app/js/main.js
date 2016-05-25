@@ -6,6 +6,7 @@ import Ortho from "./Ortho";
 import Grid from "./Grid";
 import Sprites from "./Sprites";
 import Render from "./Render";
+import Game from "./Game";
 
 
 let grid = new Grid(new Vector(16,9,1));
@@ -19,6 +20,8 @@ let render = new Render(grid, sprites,
 );
 
 setTimeout(_ => render.draw(), 200); // wait for load
+
+const BrutalTD = new Game();
 
 class App {
 	constructor(level) {
