@@ -105,10 +105,11 @@ export default class Render {
 		}});;
 	}
 
-	sprite(grid_pos : Vector, string, entity : string, cycle : string, frame : number) {
+	sprite(grid_pos : Vector, entity : string, state : string, frame : number) {
 		let canvas_pos = this.grid_to_canvas(grid_pos);
 		this.queue.push({z: canvas_pos.z, f: _ => {
-			let {img, rect:{x,y,w,h}} = this.sprites.get(entity, cycle, frame);
+			let r = this.sprites.get(entity, state, frame);
+			let {img, rect:{x,y,w,h}} = r;
 			this.screen.drawImage(img, x,y,w,h, canvas_pos.x, canvas_pos.y, this.cell.x, this.cell.y);
 		}});;
 	}
@@ -121,11 +122,11 @@ export default class Render {
 	draw() {
 		this.begin();
 
-		for(let z=0; z<this.grid.size.z; z++) {
-			for(let y=0; y<this.grid.size.y; y++) {
-				for(let x=0; x<this.grid.size.x; x++) {
-					this.sprite(new Vector(x,y,z), "scene", "furniture", "idle", 2);
-				}
+		for(let y=0; y<this.grid.size.y; y++) {
+			for(let x=0; x<this.grid.size.x; x++) {
+				let p = new Vector(x,y,0);
+				let e = this.grid.get(p);
+				if(e) this.sprite(p, e, "enter", 0);
 			}
 		}
 

@@ -5,7 +5,7 @@
 		[-18.44, 45.00, 45.00],
 		[  0   ,-31.55,  0.1 ]
 	],
-	"frames_per_cycle": 3,
+	"frames_per_state": 3,
 	"group": {
 		"mob": {
 			"row": 1,
@@ -19,13 +19,13 @@
 		},
 		"lava": {
 			"row": 7,
-			"entity": ["normal"],
-			"state": ["idle","opening","opened"]
+			"entity": ["lava"],
+			"state": ["enter","idle","opening","opened"]
 		},
 		"scene": {
 			"row": 9,
 			"entity": ["wall","furniture","floor"],
-			"state": ["idle"]
+			"state": ["enter","idle"]
 		}
 	}
 }
