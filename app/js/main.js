@@ -18,7 +18,7 @@ let render = new Render(grid, sprites,
 	)
 );
 
-// setTimeout(_ => render.draw(), 200); // wait for load
+setTimeout(_ => render.draw(), 200); // wait for load
 
 class App {
 	constructor(level) {
@@ -77,5 +77,5 @@ class Level {
 	}
 }
 
-const app = new App(new Level());
-app.start();
+// const app = new App(new Level());
+// app.start();

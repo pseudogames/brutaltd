@@ -1,26 +1,26 @@
 {
 	"name": "sample",
-	"frames_per_cycle": 3,
+	"frames_per_state": 3,
 	"group": {
 		"mob": {
 			"row": 1,
-			"entity": ["first", "second"],
-			"cycle": ["enter", "north", "east", "south", "west", "damaged", "dying", "finish"]
+			"entity": ["mob1", "mob2"],
+			"state": ["enter", "north", "east", "south", "west", "damaged", "dying", "finish"]
 		},
 		"tower": {
 			"row": 4,
-			"entity": ["first", "second"],
-			"cycle": ["enter", "north", "east", "south", "west", "idle", "leave"]
+			"entity": ["tower1", "tower2"],
+			"state": ["enter", "north", "east", "south", "west", "idle", "leave"]
 		},
 		"lava": {
 			"row": 7,
 			"entity": ["normal"],
-			"cycle": ["idle","opening","opened"]
+			"state": ["idle","opening","opened"]
 		},
 		"scene": {
 			"row": 9,
 			"entity": ["wall","furniture","floor"],
-			"cycle": ["idle"]
+			"state": ["idle"]
 		}
 	}
 }
