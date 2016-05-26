@@ -7,6 +7,8 @@ import Render from "./Render";
 import Loader from "./Loader";
 import Wave   from "./Wave";
 import UIManager from "./UIManager";
+import Hermes from "./Hermes";
+import * as EVENTS from "./Events";
 
 export default class Game {
 	constructor() {
@@ -28,6 +30,7 @@ export default class Game {
 		this.info = game_info;
 		this.load_level(this.info.level[0]);
 		this.current_wave = 0;
+		Hermes.subscribe(EVENTS.SEND_WAVE, this.send_wave.bind(this));
 	}
 	load_level(level : Object) {
 		this.level = level;
@@ -40,7 +43,7 @@ export default class Game {
 				this.sprites = s;
 				this.grid    = g;
 				this.render.setup(g,s).draw();
-				this.set_wave_timer();
+				// this.set_wave_timer();
 			})
 			.catch(err => {
 				console.log(`Game.start err`, err);
