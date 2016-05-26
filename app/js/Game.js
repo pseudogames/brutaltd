@@ -5,6 +5,7 @@ import Grid from "./Grid";
 import Sprites from "./Sprites";
 import Render from "./Render";
 import Loader from "./Loader";
+import Wave   from "./Wave";
 
 export default class Game {
 	constructor() {
@@ -44,32 +45,24 @@ export default class Game {
 	}
 	send_wave() {
 		this.then = Date.now();
-		this.time_elapsed = 0;
-		this.wave = this.level.wave.shift();
-		if(this.wave !== undefined) {
-			this.wave_queue = [];
+		let wave_info = this.level.wave.shift();
+		if(wave_info !== undefined) {
+			this.wave = new Wave(...wave_info, this.grid.path).start();
 			this.update();
 		} else {
 			this.end();
 		}
 	}
-	update(wave_sprite) {
+	update() {
 		this.now = Date.now();
 		let timeelapsed = (this.now - this.then);
-		let delta = timeelapsed / 1000;
 
-		this.time_elapsed += timeelapsed;
-
-		if(this.time_elapsed > 400 && this.wave_queue.length < this.wave[0]) {
-			this.time_elapsed = 0;
-			this.wave_queue.push(new Walker(this.grid.path));
-		}
+		this.wave.update(timeelapsed);
 
 		this.render.begin();
-		for(let walker of this.wave_queue) {
+		for(let walker of this.wave.queue) {
 			if(!walker.completed_path) {
-				walker.move(delta);
-				this.render.sprite(walker.position, this.wave[1], "enter", 0);
+				this.render.sprite(walker.position, this.wave.sprite, "enter", 0);
 			}
 		}
 		this.render.draw();
@@ -78,11 +71,9 @@ export default class Game {
 		this.then = this.now;
 		this.raf = requestAnimationFrame( ()=> this.update() );
 
-		if(this.wave_queue.length > 0) {
-			let wave_over = this.wave_queue.map(w => w.completed_path).reduce((l,c) => l && c, true);
-			if(wave_over) this.send_wave();
+		if(this.wave.is_finished()) {
+			this.send_wave();
 		}
-
 	}
 	end() {
 		cancelAnimationFrame(this.raf);

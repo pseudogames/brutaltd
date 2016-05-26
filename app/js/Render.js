@@ -29,7 +29,6 @@ export default class Render {
 		this.zoomer = e => e.button == 1 && this.zoom();
 		this.scroller = e => this.scroll(e.deltaY);
 
-
 		window.addEventListener('resize', this.resizer);
 		window.addEventListener('click', this.zoomer);
 		window.addEventListener('wheel', this.scroller);

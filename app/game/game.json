@@ -4,24 +4,24 @@
 			"sprites": "sample",
 			"grid": "test",
 			"wave": [
-				[5, "mob1"],
-				[10, "mob1"],
-				[15, "mob1"],
-				[5, "mob2"],
-				[10, "mob2"]
+				[5,  "mob1", 1],
+				[10, "mob1", 2],
+				[15, "mob1", 3],
+				[5,  "mob2", 4],
+				[10, "mob2", 5]
 			]
 		},
 		{
 			"sprites": "sample",
-			"grid": "test",
+			"grid": "test_alternative_grid",
 			"wave": [
-				[10, "mob1"],
-				[10, "mob1"],
-				[10, "mob1"],
-				[10, "mob2"],
-				[15, "mob1"],
-				[10, "mob2"],
-				[20, "mob1"]
+				[10, "mob1", 1],
+				[10, "mob1", 2],
+				[10, "mob1", 3],
+				[10, "mob2", 4],
+				[15, "mob1", 5],
+				[10, "mob2", 6],
+				[20, "mob1", 7]
 			]
 		}
 	]
