@@ -6,11 +6,13 @@ import Sprites from "./Sprites";
 import Render from "./Render";
 import Loader from "./Loader";
 import Wave   from "./Wave";
+import UIManager from "./UIManager";
 
 export default class Game {
 	constructor() {
 		console.log(`There's a new game in town`);
 
+		this.ui_manager = new UIManager();
 		this.render = new Render();
 
 		Loader
@@ -25,6 +27,7 @@ export default class Game {
 	start(game_info : Object) {
 		this.info = game_info;
 		this.load_level(this.info.level[0]);
+		this.current_wave = 0;
 	}
 	load_level(level : Object) {
 		this.level = level;
@@ -37,16 +40,39 @@ export default class Game {
 				this.sprites = s;
 				this.grid    = g;
 				this.render.setup(g,s).draw();
-				this.send_wave();
+				this.set_wave_timer();
 			})
 			.catch(err => {
 				console.log(`Game.start err`, err);
 			});
 	}
+	set_wave_timer() {
+		if(this.wave_timer || this.level.wave.length == 0) return
+
+		this.wave_timer = setTimeout(()=> {
+			this.send_wave();
+		}, 10000);
+
+		this.time_to_next_wave = 10000;
+		this.ui_manager.set_wave_timer(this.time_to_next_wave/1000);
+		this.wave_timer_counter = setInterval(()=>{
+			this.time_to_next_wave -= 1000;
+			this.ui_manager.set_wave_timer(this.time_to_next_wave/1000);
+		}, 1000);
+	}
 	send_wave() {
-		this.then = Date.now();
+		if(this.wave_timer) {
+			clearTimeout(this.wave_timer);
+			clearInterval(this.wave_timer_counter);
+			this.ui_manager.set_wave_timer(0);
+			this.wave_timer = undefined;
+		}
+
 		let wave_info = this.level.wave.shift();
 		if(wave_info !== undefined) {
+			this.current_wave++;
+			this.ui_manager.set_wave(this.current_wave);
+			this.then = Date.now();
 			this.wave = new Wave(...wave_info, this.grid.path).start();
 			this.update();
 		} else {
@@ -55,9 +81,9 @@ export default class Game {
 	}
 	update() {
 		this.now = Date.now();
-		let timeelapsed = (this.now - this.then);
+		let time_elapsed = (this.now - this.then);
 
-		this.wave.update(timeelapsed);
+		this.wave.update(time_elapsed);
 
 		this.render.begin();
 		for(let walker of this.wave.queue) {
@@ -72,7 +98,7 @@ export default class Game {
 		this.raf = requestAnimationFrame( ()=> this.update() );
 
 		if(this.wave.is_finished()) {
-			this.send_wave();
+			this.set_wave_timer();
 		}
 	}
 	end() {
