@@ -33,6 +33,7 @@ export default class Game {
 	send_wave() {
 		this.then = Date.now();
 		this.time_elapsed = 0;
+		this.wave = [];
 		this.update();
 	}
 	update() {

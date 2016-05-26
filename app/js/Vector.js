@@ -1,5 +1,9 @@
 export default class Vector {
 
+	static copy(v : Vector) : Vector {
+		return new Vector(v.x,v.y,v.z);
+	}
+
 	constructor(x,y,z) {
 		this.x = x || 0; // Number
 		this.y = y || 0; // Number
