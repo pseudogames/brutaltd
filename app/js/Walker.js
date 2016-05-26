@@ -8,8 +8,8 @@ const limiter = {
 export default class Walker {
 	constructor(path_instructions : Array<Vector> = [new Vector()]) {
 		//make a new copy so as not to modify path_instructions by reference
-		let instructions = path_instructions.slice();
-		this.position = Vector.copy(instructions.shift());
+		let instructions = path_instructions.slice().map(v => Vector.copy(v));
+		this.position = instructions.shift();
 		this.speed = 1;
 		this.path_instructions = instructions;
 		this.next_instruction();
@@ -37,7 +37,7 @@ export default class Walker {
 			return;
 		}
 
-		this.current_instruction = Vector.copy(this.path_instructions.shift());
+		this.current_instruction = this.path_instructions.shift();
 
 		let {x : nx, y : ny} = this.current_instruction;
 		let {x,y}        = this.position;

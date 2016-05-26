@@ -38,6 +38,9 @@ function build() {
 	var html = gulp.src(['app/index.html'])
 			.pipe(gulp.dest('build'));
 
+	var game = gulp.src(['app/game/*'])
+			.pipe(gulp.dest('build/game'));
+
 	var sprite = gulp.src(['app/sprite/*'])
 			.pipe(gulp.dest('build/sprite'));
 
@@ -49,7 +52,7 @@ function build() {
 			.pipe(webpack(require('./webpack.config.js')))
 			.pipe(gulp.dest('build/js'));
 
-	return merge(html, sprite, grid, js); // can't run on parallel with 'clean'
+	return merge(html, game, sprite, grid, js); // can't run on parallel with 'clean'
 }
 
 gulp.task('clean-build', ['clean'], build);
