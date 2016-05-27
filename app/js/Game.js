@@ -63,7 +63,7 @@ export default class Game {
 		for(let walker of this.wave.queue) {
 			if(!walker.completed_path) {
 				let frame = Math.floor((new Date()).getMilliseconds() / 200) % 2;
-				this.render.sprite(walker.position, this.wave.sprite, "east", frame);
+				this.render.sprite(walker.position, this.wave.sprite, walker.facing, frame);
 			}
 		}
 		this.render.draw();
