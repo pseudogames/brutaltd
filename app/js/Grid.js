@@ -3,16 +3,19 @@ import Loader from "./Loader";
 
 export default class Grid {
 
-	static create(size : Vector, id : string) {
+	static create(id : string) {
+		console.log(`Grid.create ${id}`);
 		return new Promise(
 			function (resolve, reject) {
 				Loader
 					.json("grid/"+id+".json")
 					.then(
 						(json) => {
-							resolve(new Grid(size, JSON.parse(json)));
+							console.log("Grid.create success");
+							resolve(new Grid(JSON.parse(json)));
 						},
 						(error) => {
+							console.error("Grid.create error", error);
 							reject(error);
 						}
 				);
@@ -20,26 +23,24 @@ export default class Grid {
 		);
 	}
 
-	constructor(size : Vector, info : Object) {
-		this.size = size;
+	constructor(info : Object) {
+		this.size = new Vector(...info.size);
 		this.info = info;
-		this.path = this.info.path.map( (a) => new Vector(...a) )
-	}
-
-	get(p : Vector) {
-		if(!this.info) return [];
-
-		if(!this.base) {
-			this.base = [];
-			for(let y=0; y<this.info.size[1]; y++) {
-				this.base[y] = [];
-				for(let x=0; x<this.info.size[0]; x++) {
-					this.base[y][x] = this.info.sprites[this.info.base[y][x]]
+		this.path = this.info.path.map( (p) => new Vector(...p) )
+		this.base = [];
+		for(let z=0; z<this.size.z; z++) {
+			this.base[z] = [];
+			for(let y=0; y<this.size.y; y++) {
+				this.base[z][y] = [];
+				for(let x=0; x<this.size.x; x++) {
+					this.base[z][y][x] = this.info.sprites[this.info.base[z][y][x]];
 				}
 			}
 		}
-		
-		return this.base[p.y][p.x];
+	}
+
+	get(p : Vector) {
+		return this.base[p.z][p.y][p.x];
 	}
 }
 

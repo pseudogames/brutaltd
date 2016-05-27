@@ -1,10 +1,9 @@
-import Walker from "./Walker";
 import Vector from "./Vector";
-import Ortho from "./Ortho";
+import Loader from "./Loader";
 import Grid from "./Grid";
 import Sprites from "./Sprites";
 import Render from "./Render";
-import Loader from "./Loader";
+import Walker from "./Walker";
 import Wave   from "./Wave";
 import UIManager from "./UIManager";
 import Hermes from "./Hermes";
@@ -36,21 +35,24 @@ export default class Game {
 		this.level = level;
 		Promise
 			.all([
-				Sprites.create(new Vector(66,96), level.sprites),
-				Grid.create(new Vector(16,9,1), level.grid)
+				Sprites.create(level.sprites),
+				Grid.create(level.grid)
 			])
-			.then( ([s, g]) => {
-				this.sprites = s;
-				this.grid    = g;
-				this.render.setup(g,s).draw();
-				// this.set_wave_timer();
-			})
-			.catch(err => {
-				console.log(`Game.start err`, err);
-			});
+			.then(
+				([s, g]) => {
+					console.log("Game.load_level Promise.all.success");
+					this.sprites = s;
+					this.grid    = g;
+					this.render.setup(g,s).draw();
+					this.set_wave_timer();
+				},
+				(error) => {
+					console.log("load_level error", error);
+				}
+			)
 	}
 	set_wave_timer() {
-		if(this.wave_timer || this.level.wave.length == 0) return
+		if(this.wave_timer || this.level.wave.length == 0) return;
 
 		this.wave_timer = setTimeout(()=> {
 			this.send_wave();
@@ -73,10 +75,14 @@ export default class Game {
 
 		let wave_info = this.level.wave.shift();
 		if(wave_info !== undefined) {
+
 			this.current_wave++;
 			this.ui_manager.set_wave(this.current_wave);
 			this.then = Date.now();
-			this.wave = new Wave(...wave_info, this.grid.path).start();
+
+			let [quantity,sprite,speed] = wave_info;
+			this.wave = new Wave(quantity,sprite,speed, this.grid.path).start();
+
 			this.update();
 		} else {
 			this.end();
@@ -91,7 +97,8 @@ export default class Game {
 		this.render.begin();
 		for(let walker of this.wave.queue) {
 			if(!walker.completed_path) {
-				this.render.sprite(walker.position, this.wave.sprite, "enter", 0);
+				let frame = Math.floor((new Date()).getMilliseconds() / 200) % 2;
+				this.render.sprite(walker.position, this.wave.sprite, "east", frame);
 			}
 		}
 		this.render.draw();

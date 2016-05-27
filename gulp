@@ -1,6 +1,8 @@
 #!/bin/bash -x
 
-test package.json -nt node_modules && { npm -d install || exit 1 ; }
+cd $(dirname $0)
+
+test package.json -nt node_modules && { npm -d install || exit 1 ; touch node_modules ; }
 
 cd node_modules/.bin
 exec ./gulp "$@"

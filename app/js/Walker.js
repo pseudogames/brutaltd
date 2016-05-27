@@ -15,7 +15,6 @@ export default class Walker {
 		this.next_instruction();
 		this.completed_path = false;
 	}
-
 	move(amount) {
 		if(this.completed_path === true || this.current_instruction == undefined) return;
 
@@ -30,7 +29,6 @@ export default class Walker {
 			this.next_instruction();
 		}
 	}
-
 	next_instruction() {
 		if(this.path_instructions.length == 0)  {
 			this.completed_path = true;
@@ -45,7 +43,6 @@ export default class Walker {
 		this.x_direction = Math.sign(x-nx) * -1;
 		this.y_direction = Math.sign(y-ny) * -1;
 	}
-
 	limit(direction, amount, current_position, next_position) {
 		if(Math.abs(direction) == 0) return current_position;
 		return limiter[direction](current_position + amount * direction, next_position);
