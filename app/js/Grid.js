@@ -25,16 +25,19 @@ export default class Grid {
 		this.info = info;
 		this.path = this.info.path.map( (p) => new Vector(...p) )
 		this.base = [];
-		for(let y=0; y<this.size.y; y++) {
-			this.base[y] = [];
-			for(let x=0; x<this.size.x; x++) {
-				this.base[y][x] = this.info.sprites[this.info.base[y][x]]
+		for(let z=0; z<this.size.z; z++) {
+			this.base[z] = [];
+			for(let y=0; y<this.size.y; y++) {
+				this.base[z][y] = [];
+				for(let x=0; x<this.size.x; x++) {
+					this.base[z][y][x] = this.info.sprites[this.info.base[z][y][x]];
+				}
 			}
 		}
 	}
 
 	get(p : Vector) {
-		return this.base[p.y][p.x];
+		return this.base[p.z][p.y][p.x];
 	}
 }
 

@@ -82,7 +82,7 @@ export default class Render {
 
 	rezoom() {
 		this.scroll_abs = Bounds.min(this.viewport.sub(this.bounds.size.scale(this.scale)), Vector.zero())
-		this.cell = this.sprites.size.scale(this.scale);
+		this.sprite_size = this.sprites.size.scale(this.scale).floor();
 		this.begin(); this.draw(); this.end();
 	}
 
@@ -110,16 +110,16 @@ export default class Render {
 		let canvas_pos = this.grid_to_canvas(grid_pos).floor();
 		this.queue.push({z: canvas_pos.z, f: _ => {
 			this.screen.fillStyle = color;
-			this.screen.fillRect(canvas_pos.x, canvas_pos.y, this.cell.x, this.cell.y);
+			this.screen.fillRect(canvas_pos.x, canvas_pos.y, this.sprite_size.x, this.sprite_size.y);
 		}});;
 	}
 
-	sprite(grid_pos : Vector, entity : string, state : string, frame : number) {
-		let canvas_pos = this.grid_to_canvas(grid_pos).floor();
-		this.queue.push({z: canvas_pos.z, f: _ => {
-			let r = this.sprites.get(entity, state, frame);
-			let {img, rect:{x,y,w,h}} = r;
-			this.screen.drawImage(img, x,y,w,h, canvas_pos.x, canvas_pos.y, this.cell.x, this.cell.y);
+	sprite(grid_pos : Vector, entity : string, state : string = "", frame : number = 0) {
+		var {img, geometry:{x,y,z,w,h}} = this.sprites.get(entity, state, frame);
+		let canvas_pos = this.grid_to_canvas(grid_pos);
+		let layer = canvas_pos.add(this.projection.project(new Vector(0,0,z)).scale(this.scale));
+		this.queue.push({z: canvas_pos.z + layer.z, f: _ => {
+			this.screen.drawImage(img, x,y,w,h, canvas_pos.x, canvas_pos.y, this.sprite_size.x, this.sprite_size.y);
 		}});;
 	}
 
@@ -131,10 +131,12 @@ export default class Render {
 	draw() {
 		// this.begin();
 
-		for(let y=0; y<this.grid.size.y; y++) {
-			for(let x=0; x<this.grid.size.x; x++) {
-				let p = new Vector(x,y,0);
-				this.grid.get(p).forEach(e => this.sprite(p, e, "enter", 0));
+		for(let z=0; z<this.grid.size.z; z++) {
+			for(let y=0; y<this.grid.size.y; y++) {
+				for(let x=0; x<this.grid.size.x; x++) {
+					let p = new Vector(x,y,z);
+					this.grid.get(p).forEach(e => this.sprite(p, e));
+				}
 			}
 		}
 

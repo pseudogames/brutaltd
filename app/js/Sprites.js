@@ -22,6 +22,74 @@ export default class Sprites {
 		);
 	}
 
+	build_index_still(info : Object) {
+		this.still = {};
+		for(let g in this.info.still) {
+			let [x0,y] = this.info.still[g].pos;
+			for(let i in this.info.still[g].entity) {
+				let z_offset = 0;
+				let x = x0;
+				for(let j in this.info.still[g].entity[i]) {
+					let e = this.info.still[g].entity[i][j];
+					if(typeof(e) == "number") {
+						z_offset = e;
+						continue;
+					}
+					this.still[e] = {
+						x: this.size.x * x,
+						y: this.size.y * y,
+						z: z_offset,
+						w: this.size.x,
+						h: this.size.y
+					};
+					x++;
+				}
+				y++;
+			}
+		}
+	}
+
+	build_index_animated(info : Object) {
+		this.animated = {};
+		for(let g in this.info.animated) {
+			let [x0,y] = this.info.animated[g].pos;
+			let z_offset = 0;
+			for(let i in this.info.animated[g].entity) {
+				let e = this.info.animated[g].entity[i];
+				if(typeof(e) == "number") {
+					z_offset = e;
+					continue;
+				}
+				this.animated[e] = {};
+				let frames_per_state = 1;
+				let x = x0;
+				for(let j in this.info.animated[g].state) {
+					let s = this.info.animated[g].state[j];
+					if(typeof(s) == "number") {
+						frames_per_state = s;
+						continue;
+					}
+					this.animated[e][s] = [];
+					for(let f=0; f < frames_per_state; f++) {
+						this.animated[e][s][f] = {
+							x: this.size.x * x,
+							y: this.size.y * y,
+							z: z_offset,
+							w: this.size.x,
+							h: this.size.y
+						};
+						if(!this.still[e]) {
+							this.still[e] = this.animated[e][s][f];
+						}
+						x++;
+					}
+				}
+				y++;
+			}
+		}
+	}
+
+
 	constructor(img : Object, info : Object) {
 		this.size = new Vector(...info.size);
 		this.img  = img;
@@ -32,29 +100,12 @@ export default class Sprites {
 			new Vector(...info.projection[1]),
 			new Vector(...info.projection[2])
 		);
-		this.index = {};
-		for(let g in this.info.group) {
-			for(let i in this.info.group[g].entity) {
-				let e = this.info.group[g].entity[i];
-				this.index[e] = {};
-				for(let j in this.info.group[g].state) {
-					let c = this.info.group[g].state[j];
-					this.index[e][c] = [];
-					for(let f=0; f < this.info.frames_per_state; f++) {
-						this.index[e][c][f] = {
-							x: this.size.x*(this.info.frames_per_state * (j|0) + f),
-							y: this.size.y*(this.info.group[g].row + (i|0)),
-							w: this.size.x,
-							h: this.size.y
-						};
-					}
-				}
-			}
-		}
+		this.build_index_still(info);
+		this.build_index_animated(info);
 	}
 
-	get(entity : string, state : string, frame : number) : Object {
-		return {img: this.img, rect: this.index[entity][state][frame]};
+	get(entity : string, state : string = "", frame : number = 0) : Object {
+		return {img: this.img, geometry: state ? this.animated[entity][state][frame] : this.still[entity]};
 	}
 }
 

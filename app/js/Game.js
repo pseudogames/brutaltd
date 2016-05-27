@@ -38,15 +38,16 @@ export default class Game {
 				this.render.setup(g,s);
 				this.send_wave();
 			})
-			.catch(err => {
-				console.log(`Game.start err`, err);
-			});
+			//.catch(err => {
+			//	console.log(`Game.start err`, err);
+			//});
 	}
 	send_wave() {
 		this.then = Date.now();
 		let wave_info = this.level.wave.shift();
 		if(wave_info !== undefined) {
-			this.wave = new Wave(...wave_info, this.grid.path).start();
+			let [quantity,sprite,speed] = wave_info;
+			this.wave = new Wave(quantity,sprite,speed, this.grid.path).start();
 			this.update();
 		} else {
 			this.end();
@@ -61,7 +62,8 @@ export default class Game {
 		this.render.begin();
 		for(let walker of this.wave.queue) {
 			if(!walker.completed_path) {
-				this.render.sprite(walker.position, this.wave.sprite, "enter", 0);
+				let frame = Math.floor((new Date()).getMilliseconds() / 200) % 2;
+				this.render.sprite(walker.position, this.wave.sprite, "east", frame);
 			}
 		}
 		this.render.draw();
