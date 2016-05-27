@@ -26,7 +26,8 @@ export default class Level {
 	constructor(sprites : Sprites, grid : Grid, waves) {
 		this.sprites = sprites;
 		this.grid    = grid;
-		this.waves   = waves;
+		//make a new copy so as not to modify waves by reference
+		this.waves   = waves.map(w => w);
 	}
 
 	send_wave() {
