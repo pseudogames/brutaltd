@@ -14,7 +14,7 @@
 		"fluid": {
 			"pos": [3,0],
 			"entity": [0.2, "lava"],
-			"state": [2, "still"]
+			"state": [3, "still"]
 		}
 	},
 	"still": {
