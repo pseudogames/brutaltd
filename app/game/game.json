@@ -7,21 +7,21 @@
 				[ 5,  "mob1", 1, "10:00", "standup"],
 				[10,  "mob1", 2, "13:00", "planning"],
 				[15,  "mob1", 3, "14:00", "review"],
-				[ 5,  "mob2", 4, "16:00", "retrospective"],
-				[10,  "mob2", 5, "18:00", "replanning"]
+				[ 5,  "mob1", 4, "16:00", "retrospective"],
+				[10,  "mob1", 5, "18:00", "replanning"]
 			]
 		},
 		{
 			"sprites": "sample",
 			"grid": "test_alternative_grid",
 			"wave": [
-				[10, "mob1", 2, "08:00", "strategic"],
-				[10, "mob1", 2, "10:00", "budget"],
+				[10, "mob1", 1, "08:00", "strategic"],
+				[10, "mob1", 1, "10:00", "budget"],
 				[10, "mob1", 2, "13:00", "operational"],
 				[10, "mob2", 2, "14:00", "taxes"],
-				[15, "mob1", 2, "16:00", "marketing"],
-				[10, "mob2", 2, "18:00", "new layout"],
-				[20, "mob1", 2, "22:00", "postmortem"]
+				[15, "mob1", 3, "16:00", "marketing"],
+				[10, "mob2", 3, "18:00", "new layout"],
+				[20, "mob1", 4, "22:00", "postmortem"]
 			]
 		}
 	]

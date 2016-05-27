@@ -1,17 +1,16 @@
-import Vector from "./Vector";
-import Loader from "./Loader";
-import Grid from "./Grid";
+import Vector  from "./Vector";
+import Loader  from "./Loader";
+import Grid    from "./Grid";
 import Sprites from "./Sprites";
-import Render from "./Render";
-import Walker from "./Walker";
-import Wave   from "./Wave";
+import Render  from "./Render";
+import Walker  from "./Walker";
+import Wave    from "./Wave";
+import Level   from "./Level";
 
 export default class Game {
 	constructor() {
 		console.log(`There's a new game in town`);
-
 		this.render = new Render();
-
 		Loader
 			.json('game/game.json')
 			.then(
@@ -22,32 +21,30 @@ export default class Game {
 		return this;
 	}
 	start(game_info : Object) {
-		this.info = game_info;
-		this.load_level(this.info.level[0]);
+		this.game_info = game_info;
+		this.load_level(0);
 	}
-	load_level(level : Object) {
-		this.level = level;
-		Promise
-			.all([
-				Sprites.create(level.sprites),
-				Grid.create(level.grid)
-			])
-			.then( ([s, g]) => {
-				this.sprites = s;
-				this.grid    = g;
-				this.render.setup(g,s);
-				this.send_wave();
-			})
-			//.catch(err => {
-			//	console.log(`Game.start err`, err);
-			//});
+	load_level(level_number : number) {
+		this.end();
+		let level_info = this.game_info.level[level_number];
+		if(level_info !== undefined) {
+			Level
+				.load(level_info)
+				.then(level => {
+					console.log("Game.load_level success", level);
+					this.level = level;
+					this.render.setup(this.level.grid, this.level.sprites);
+					this.send_wave();
+				})
+				//.catch(err => {
+				//	console.log(`Game.start err`, err);
+				//});
+		}
 	}
 	send_wave() {
 		this.then = Date.now();
-		let wave_info = this.level.wave.shift();
-		if(wave_info !== undefined) {
-			let [quantity,sprite,speed] = wave_info;
-			this.wave = new Wave(quantity,sprite,speed, this.grid.path).start();
+		let wave_sent = this.level.send_wave();
+		if(wave_sent === true) {
 			this.update();
 		} else {
 			this.end();
@@ -55,28 +52,25 @@ export default class Game {
 	}
 	update() {
 		this.now = Date.now();
-		let timeelapsed = (this.now - this.then);
-
-		this.wave.update(timeelapsed);
+		let time_elapsed = (this.now - this.then);
 
 		this.render.begin();
-		for(let walker of this.wave.queue) {
-			if(!walker.completed_path) {
-				let frame = Math.floor(Date.now() / 100 * this.wave.speed) % this.sprites.animated[this.wave.sprite]["east"].length;
-				this.render.sprite(walker.position, this.wave.sprite, this.sprites.facing(walker.direction), frame);
-			}
-		}
+
+		this.level.update(time_elapsed, this.render.sprite.bind(this.render));
+
 		this.render.draw();
 		this.render.end();
 
 		this.then = this.now;
 		this.raf = requestAnimationFrame( ()=> this.update() );
 
-		if(this.wave.is_finished()) {
+		if(this.level.wave_is_finished()) {
 			this.send_wave();
 		}
 	}
 	end() {
-		cancelAnimationFrame(this.raf);
+		if(this.raf) {
+			cancelAnimationFrame(this.raf);
+		}
 	}
 }

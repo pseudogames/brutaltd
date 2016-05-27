@@ -1,12 +1,12 @@
 import Walker from "./Walker";
 
 export default class Wave {
-	constructor(quantity, sprite, speed, grid_path){
-		this.sprite    = sprite;
-		this.quantity  = quantity;
-		this.speed     = speed;
-		this.grid_path = grid_path;
-		this.queue     = [];
+	constructor(quantity, sprite_entity, speed, grid_path){
+		this.sprite_entity = sprite_entity;
+		this.quantity      = quantity;
+		this.speed         = speed;
+		this.grid_path     = grid_path;
+		this.queue         = [];
 		return this;
 	}
 	start() {
