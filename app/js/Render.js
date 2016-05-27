@@ -83,7 +83,7 @@ export default class Render {
 	rezoom() {
 		this.scroll_abs = Bounds.min(this.viewport.sub(this.bounds.size.scale(this.scale)), Vector.zero())
 		this.sprite_size = this.sprites.size.scale(this.scale).floor();
-		this.begin(); this.draw(); this.end();
+		this.begin().draw().end();
 	}
 
 	zoom() {
@@ -92,7 +92,7 @@ export default class Render {
 
 	scroll(y : number) {
 		this.scroll_rel = Math.max(0,Math.min(1,this.scroll_rel + Math.sign(y)/8));
-		this.begin(); this.draw(); this.end();
+		this.begin().draw().end();
 	}
 
 	grid_to_canvas(grid_pos : Vector) : Vector {
@@ -104,6 +104,7 @@ export default class Render {
 
 	begin() {
 		this.queue = [];
+		return this;
 	}
 
 	plot(grid_pos : Vector, color : string = "rgba("+Bounds.norm(grid_pos,this.grid.size).scale(255).floor().toString()+",0.5)") {
@@ -118,6 +119,7 @@ export default class Render {
 		for(let sprite of sprites_to_render) {
 			this.sprite(sprite.grid_pos, sprite.entity, sprite.state, sprite.frame);
 		}
+		return this;
 	}
 
 	sprite(grid_pos : Vector, entity : string, state : string = "", frame : number = 0) {
@@ -146,6 +148,8 @@ export default class Render {
 				}
 			}
 		}
+
+		return this;
 
 		// this.end();
 	}

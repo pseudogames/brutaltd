@@ -29,15 +29,15 @@ export default class Game {
 	load_level(level_number : number) {
 		this.end();
 		let level_info = this.game_info.level[level_number];
+		// TODO: deal with exceptions
 		if(level_info !== undefined) {
-			// TODO: deal with exceptions
 			Level
 				.load(level_info)
 				.then(level => {
 					this.level = level;
 					this.render.setup(this.level.grid, this.level.sprites);
 					this.send_wave();
-				})
+				});
 		}
 	}
 	send_wave() {
@@ -53,10 +53,11 @@ export default class Game {
 		this.now = Date.now();
 		let time_elapsed = (this.now - this.then);
 
-		this.render.begin();
-		this.render.enqueue_sprites(this.level.update(time_elapsed));
-		this.render.draw();
-		this.render.end();
+		this.render
+			.begin()
+			.enqueue_sprites(this.level.update(time_elapsed))
+			.draw()
+			.end();
 
 		this.then = this.now;
 		this.raf = requestAnimationFrame( ()=> this.update() );
