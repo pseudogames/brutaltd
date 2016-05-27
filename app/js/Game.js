@@ -1,10 +1,9 @@
-import Walker from "./Walker";
 import Vector from "./Vector";
-import Ortho from "./Ortho";
+import Loader from "./Loader";
 import Grid from "./Grid";
 import Sprites from "./Sprites";
 import Render from "./Render";
-import Loader from "./Loader";
+import Walker from "./Walker";
 import Wave   from "./Wave";
 
 export default class Game {
@@ -30,13 +29,13 @@ export default class Game {
 		this.level = level;
 		Promise
 			.all([
-				Sprites.create(new Vector(66,96), level.sprites),
-				Grid.create(new Vector(16,9,1), level.grid)
+				Sprites.create(level.sprites),
+				Grid.create(level.grid)
 			])
 			.then( ([s, g]) => {
 				this.sprites = s;
 				this.grid    = g;
-				this.render.setup(g,s).draw();
+				this.render.setup(g,s);
 				this.send_wave();
 			})
 			.catch(err => {
