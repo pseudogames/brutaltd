@@ -23,8 +23,8 @@ export default class Walker {
 		let {x,y}        = this.position;
 		let moved_amount = this.speed * amount;
 
-		this.position.x = this.limit(this.x_direction, moved_amount, x, nx);
-		this.position.y = this.limit(this.y_direction, moved_amount, y, ny);
+		this.position.x = this.limit(this.direction.x, moved_amount, x, nx);
+		this.position.y = this.limit(this.direction.y, moved_amount, y, ny);
 
 		if(this.position.x == nx && this.position.y == ny) {
 			this.next_instruction();
@@ -42,8 +42,7 @@ export default class Walker {
 		let {x : nx, y : ny} = this.current_instruction;
 		let {x,y}        = this.position;
 
-		this.x_direction = Math.sign(x-nx) * -1;
-		this.y_direction = Math.sign(y-ny) * -1;
+		this.direction = new Vector(Math.sign(x-nx) * -1, Math.sign(y-ny) * -1);
 	}
 
 	limit(direction, amount, current_position, next_position) {

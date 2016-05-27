@@ -63,7 +63,7 @@ export default class Game {
 		for(let walker of this.wave.queue) {
 			if(!walker.completed_path) {
 				let frame = Math.floor(Date.now() / 100 * this.wave.speed) % this.sprites.animated[this.wave.sprite]["east"].length;
-				this.render.sprite(walker.position, this.wave.sprite, this.sprites.facing(walker.x_direction, walker.y_direction), frame);
+				this.render.sprite(walker.position, this.wave.sprite, this.sprites.facing(walker.direction), frame);
 			}
 		}
 		this.render.draw();
