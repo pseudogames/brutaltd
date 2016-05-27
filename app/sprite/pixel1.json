@@ -1,0 +1,34 @@
+{
+	"size": [50,66],
+	"projection": [
+		[ 32,  8,  4],
+		[-15, 15, 16],
+		[  0,-41, 16]
+	],
+	"faces" : {
+		"01"  : "east",
+		"0-1" : "east",
+		"10"  : "east",
+		"-10" : "east"
+	},
+	"animated": {
+		"mob": {
+			"pos": [0,1],
+			"entity": [0.6, "mob1"],
+			"state": [6, "east"]
+		},
+		"fluid": {
+			"pos": [3,0],
+			"entity": [0.2, "lava"],
+			"state": [3, "still"]
+		}
+	},
+	"still": {
+		"base": {
+			"pos": [0,0],
+			"entity": [
+				[0.7, "wall", 0.3, "floor","table"]
+			]
+		}
+	}
+}

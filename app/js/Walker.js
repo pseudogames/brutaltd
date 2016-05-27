@@ -5,13 +5,6 @@ const limiter = {
 	[1]  : Math.min
 }
 
-const faces = {
-	'01' : "south",
-	'0-1' : "north",
-	'10' : "east",
-	'-10' : "west"
-};
-
 export default class Walker {
 	constructor(path_instructions : Array<Vector> = [new Vector()], speed : number = 1) {
 		//make a new copy so as not to modify path_instructions by reference
@@ -21,7 +14,6 @@ export default class Walker {
 		this.path_instructions = instructions;
 		this.next_instruction();
 		this.completed_path = false;
-		this.facing = "east";
 	}
 
 	move(amount) {
@@ -52,7 +44,6 @@ export default class Walker {
 
 		this.x_direction = Math.sign(x-nx) * -1;
 		this.y_direction = Math.sign(y-ny) * -1;
-		this.facing = faces[ [this.x_direction,this.y_direction].join("") ];
 	}
 
 	limit(direction, amount, current_position, next_position) {

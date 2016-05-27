@@ -107,5 +107,9 @@ export default class Sprites {
 	get(entity : string, state : string = "", frame : number = 0) : Object {
 		return {img: this.img, geometry: state ? this.animated[entity][state][frame] : this.still[entity]};
 	}
+
+	facing(x,y) {
+		return this.info.faces[ [x,y].join("") ];
+	}
 }
 

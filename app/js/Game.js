@@ -62,8 +62,8 @@ export default class Game {
 		this.render.begin();
 		for(let walker of this.wave.queue) {
 			if(!walker.completed_path) {
-				let frame = Math.floor((new Date()).getMilliseconds() / 200) % 2;
-				this.render.sprite(walker.position, this.wave.sprite, walker.facing, frame);
+				let frame = Math.floor(Date.now() / 100 * this.wave.speed) % this.sprites.animated[this.wave.sprite]["east"].length;
+				this.render.sprite(walker.position, this.wave.sprite, this.sprites.facing(walker.x_direction, walker.y_direction), frame);
 			}
 		}
 		this.render.draw();
