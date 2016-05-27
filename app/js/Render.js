@@ -135,7 +135,7 @@ export default class Render {
 			for(let y=0; y<this.grid.size.y; y++) {
 				for(let x=0; x<this.grid.size.x; x++) {
 					let p = new Vector(x,y,z);
-					let frame = Math.floor(Date.now() / 300) % 3;
+					let frame = Math.floor(Date.now() / 300) % this.sprites.animated["lava"]["still"].length;;
 					this.grid.get(p).forEach(e => e == "lava" ? this.sprite(p, e, "still", frame) : this.sprite(p, e) );
 				}
 			}

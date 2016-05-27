@@ -9,7 +9,7 @@
 		"mob": {
 			"pos": [0,1],
 			"entity": [0.6, "mob1"],
-			"state": [6, "north-east"]
+			"state": [6, "east"]
 		},
 		"fluid": {
 			"pos": [3,0],
