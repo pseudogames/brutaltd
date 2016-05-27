@@ -108,7 +108,7 @@ export default class Sprites {
 		return {img: this.img, geometry: state ? this.animated[entity][state][frame] : this.still[entity]};
 	}
 
-	facing(direction : Vector) {
+	get_state(direction : Vector) {
 		return this.info.faces[ [direction.x,direction.y].join("") ];
 	}
 }

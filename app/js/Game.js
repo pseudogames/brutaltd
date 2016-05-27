@@ -11,6 +11,8 @@ export default class Game {
 	constructor() {
 		console.log(`There's a new game in town`);
 		this.render = new Render();
+
+		// TODO: deal with exceptions
 		Loader
 			.json('game/game.json')
 			.then(
@@ -28,17 +30,14 @@ export default class Game {
 		this.end();
 		let level_info = this.game_info.level[level_number];
 		if(level_info !== undefined) {
+			// TODO: deal with exceptions
 			Level
 				.load(level_info)
 				.then(level => {
-					console.log("Game.load_level success", level);
 					this.level = level;
 					this.render.setup(this.level.grid, this.level.sprites);
 					this.send_wave();
 				})
-				//.catch(err => {
-				//	console.log(`Game.start err`, err);
-				//});
 		}
 	}
 	send_wave() {
@@ -55,9 +54,7 @@ export default class Game {
 		let time_elapsed = (this.now - this.then);
 
 		this.render.begin();
-
-		this.level.update(time_elapsed, this.render.sprite.bind(this.render));
-
+		this.render.enqueue_sprites(this.level.update(time_elapsed));
 		this.render.draw();
 		this.render.end();
 

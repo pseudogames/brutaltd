@@ -43,14 +43,22 @@ export default class Level {
 		return this.wave.is_finished();
 	}
 
-	update(time_elapsed, render_sprite) {
+	update(time_elapsed : number) {
 		this.wave.update(time_elapsed);
+		let sprites_to_render = [];
 		for(let walker of this.wave.queue) {
 			if(!walker.completed_path) {
-				let facing = this.sprites.facing(walker.direction);
-				let frame = Math.floor(Date.now() / 100 * this.wave.speed) % this.sprites.animated[this.wave.sprite_entity][facing].length;
-				render_sprite(walker.position, this.wave.sprite_entity, facing, frame);
+				let state = this.sprites.get_state(walker.direction);
+				let frame = Math.floor(Date.now() / 100 * this.wave.speed) % this.sprites.animated[this.wave.sprite_entity][state].length;
+				// TODO: should this be an Object? like new RenderableSprite????
+				sprites_to_render.push({
+					grid_pos : walker.position,
+					entity   : this.wave.sprite_entity,
+					state    : state,
+					frame    : frame
+				});
 			}
 		}
+		return sprites_to_render;
 	}
 }

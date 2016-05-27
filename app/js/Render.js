@@ -114,6 +114,12 @@ export default class Render {
 		}});;
 	}
 
+	enqueue_sprites(sprites_to_render : Array<Object>) {
+		for(let sprite of sprites_to_render) {
+			this.sprite(sprite.grid_pos, sprite.entity, sprite.state, sprite.frame);
+		}
+	}
+
 	sprite(grid_pos : Vector, entity : string, state : string = "", frame : number = 0) {
 		var {img, geometry:{x,y,z,w,h}} = this.sprites.get(entity, state, frame);
 		let canvas_pos = this.grid_to_canvas(grid_pos);
