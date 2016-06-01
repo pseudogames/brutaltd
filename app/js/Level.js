@@ -3,17 +3,17 @@ import Sprites from "./Sprites";
 import Wave    from "./Wave";
 
 export default class Level {
-	static load(level_info : Object) {
+	static load({sprites, grid, wave}) {
 		return new Promise(
 			function (resolve, reject) {
 				Promise
 					.all([
-						Sprites.create(level_info.sprites),
-						Grid.create(level_info.grid)
+						Sprites.create(sprites),
+						Grid.create(grid)
 					])
 					.then(
 						([s, g]) => {
-							resolve(new Level(s,g,level_info.wave));
+							resolve(new Level(s,g,wave));
 						},
 						(error) => {
 							reject(error);
