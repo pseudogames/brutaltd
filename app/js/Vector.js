@@ -42,6 +42,14 @@ export default class Vector {
 		);
 	}
 
+	sign() : Vector {
+		return new Vector(
+			Math.sign(this.x),
+			Math.sign(this.y),
+			Math.sign(this.z)
+		);
+	}
+
 	static zero() : Vector {
 		return new Vector(0,0,0);
 	}

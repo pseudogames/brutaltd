@@ -38,11 +38,7 @@ export default class Walker {
 		}
 
 		this.current_instruction = this.path_instructions.shift();
-
-		let {x : nx, y : ny} = this.current_instruction;
-		let {x,y}        = this.position;
-
-		this.direction = new Vector(Math.sign(x-nx) * -1, Math.sign(y-ny) * -1);
+		this.direction = this.current_instruction.sub(this.position).sign();
 	}
 
 	limit(direction, amount, current_position, next_position) {
