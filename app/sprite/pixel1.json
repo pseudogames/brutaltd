@@ -3,7 +3,7 @@
 	"projection": [
 		[ 32,  8,  4],
 		[-15, 15, 16],
-		[  0,-41, 16]
+		[  0,-41, 48]
 	],
 	"faces" : {
 		"01"  : "east",
@@ -14,7 +14,7 @@
 	"animated": {
 		"mob": {
 			"pos": [0,1],
-			"entity": [0.6, "mob1"],
+			"entity": [0.8, "mob1"],
 			"state": [6, "east"]
 		},
 		"fluid": {
@@ -27,7 +27,7 @@
 		"base": {
 			"pos": [0,0],
 			"entity": [
-				[0.7, "wall", 0.3, "floor","table"]
+				[0.4, "wall", 0.3, "floor","table"]
 			]
 		}
 	}
