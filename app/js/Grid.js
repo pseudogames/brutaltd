@@ -72,6 +72,10 @@ export default class Grid {
 		p = p.floor();
 		return this.cell[p.z][p.y][p.x];
 	}
+
+	delete(e : any) : void {
+		//TODO
+	}
 }
 
 

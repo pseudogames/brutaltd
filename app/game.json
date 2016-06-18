@@ -4,11 +4,11 @@
 			"sheet": "pixel1",
 			"grid": "test",
 			"wave": [
-				[ 5,  "mob1", 1, 10, "standup"],
-				[10,  "mob1", 2, 13, "planning"],
-				[15,  "mob1", 3, 14, "review"],
-				[ 5,  "mob1", 4, 16, "retrospective"],
-				[10,  "mob1", 5, 18, "replanning"]
+				[ 5,  "mob1 : Mob({\"speed\":1})", 10, "standup"],
+				[10,  "mob1 : Mob({\"speed\":2})", 13, "planning"],
+				[15,  "mob1 : Mob({\"speed\":3})", 14, "review"],
+				[ 5,  "mob1 : Mob({\"speed\":4})", 16, "retrospective"],
+				[10,  "mob1 : Mob({\"speed\":5})", 18, "replanning"]
 			]
 		},
 		{

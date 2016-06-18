@@ -116,6 +116,11 @@ export class Sheet {
 		this.z_offset = {};
 		this.build_index_still(info);
 		this.build_index_animated(info);
+
+		let invalid = Object.keys(this.animated).filter(s => !this.animated[s].hasOwnProperty("idle"));
+		if(invalid.length > 0)
+			throw `animated sprites without idle state: ${invalid}`
+
 	}
 
 	is_animated(shape : string) : number {

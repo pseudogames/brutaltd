@@ -14,7 +14,7 @@
 	"animated": {
 		"mob": {
 			"pos": [0,1],
-			"cycle": [6, "east"],
+			"cycle": [5, "east", 1, "idle"],
 			"shape": [0.8, "mob1"]
 		},
 		"fluid": {

@@ -3,8 +3,6 @@ import Loader  from "./Loader";
 import Grid    from "./Grid";
 import {Sheet} from "./Sprite";
 import Render  from "./Render";
-import Walker  from "./Walker";
-import Wave    from "./Wave";
 import * as Entity  from "./Entity";
 
 
@@ -69,7 +67,7 @@ export default class Game {
 			throw `type '${type}' is animated but shape '${shape}' is not check your 'grid/${this.tier.grid}.json' file`;
 
 		info = info ? JSON.parse(info) : {};
-		this.add(new Type(pos, shape, this, info));
+		return new Type(pos, shape, this, info);
 	}
 
 	start(tier : number) {
@@ -90,7 +88,7 @@ export default class Game {
 				this.sheet = s;
 				this.grid = g;
 				this.render.setup(g,s,this.state);
-				this.grid.forEachItem( this.deserialize.bind(this) );
+				this.grid.forEachItem( (p,e) => this.add( this.deserialize(p,e) ) );
 				this.send_wave(); // TODO button to start
 			},
 			error => {
@@ -101,7 +99,7 @@ export default class Game {
 
 
 	tick() : void {
-		this.entity.forEach(e => e.tick());
+		this.entity.forEach(e => e.tick(1));
 	}
 
 	send_wave() {
@@ -110,7 +108,11 @@ export default class Game {
 			return;
 		}
 
-		let [quantity, entity, speed, schedule, meeting] = this.waves.shift();
+		let [quantity, entity, schedule, meeting] = this.waves.shift();
+		while(quantity --> 0) {
+			this.add( this.deserialize(this.grid.path[0], entity) );
+		}
 
+		setInterval(()=> this.tick(), 500);
 	}
 }
