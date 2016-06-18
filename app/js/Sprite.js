@@ -128,7 +128,7 @@ export class Sheet {
 		return this.z_offset[shape];
 	}
 
-	get(d : State) : Frame {
+	get(d : State) : Object {
 		return {
 			image: this.image, 
 			geometry: d.cycle ?

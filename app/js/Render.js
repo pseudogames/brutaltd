@@ -124,7 +124,7 @@ export default class Render {
 		this.entity.delete(e);
 	}
 
-	blit(pos2d : Vector, frame : Frame) : void {
+	blit(pos2d : Vector, frame : Object) : void {
 		let {image, geometry:{x,y,w,h}} = frame;
 		this.screen.drawImage(
 			image, x,y,w,h,
