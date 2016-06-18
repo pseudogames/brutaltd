@@ -1,15 +1,17 @@
 import Vector from "./Vector";
 import {Sheet,Frame,State} from "./Sprite";
 import Render from "./Render";
+import Game   from "./Game";
 
 export class Entity {
 		
-	constructor(pos : Vector, info : Object) {
+	constructor(pos : Vector, shape : string, game : Game, info : Object) {
 		this.pos = pos;
 		this.info = info;
-		this.game = info.game;
-		this.sheet = info.game.sheet;
-		this.render = info.game.render;
+		this.game = game;
+		this.shape = shape;
+		this.sheet = game.sheet;
+		this.render = game.render;
 		this.init();
 		this.prepare_frame();
 		this.prepare_pos();
@@ -18,9 +20,9 @@ export class Entity {
 	init() {
 		this.sprite = {
 			state: {
-				shape: this.info.shape
+				shape: this.shape
 			},
-			z_offset: this.sheet.get_z(this.info.shape)
+			z_offset: this.sheet.get_z(this.shape)
 		};
 	}
 
@@ -43,10 +45,6 @@ export class Still extends Entity {
 
 export class Animated extends Entity {
 
-	constructor(pos : Vector, info : Object) {
-		super(pos, info);
-	}
-
 	init() {
 		super.init();
 		this.sprite.state.cycle = "idle";
@@ -61,7 +59,7 @@ export class Animated extends Entity {
 }
 
 export class Mob extends Animated {
-	
+
 	tick(time : number) {
 		// move through the path
 		//super.tick(time);
@@ -73,8 +71,8 @@ export class Mob extends Animated {
 
 export class Tower extends Animated {
 
-	constructor(pos : Vector, info : Object) {
-		super(pos, info);
+	constructor(pos : Vector, shape : string, game : Game, info : Object) {
+		super(pos, shape, game, info);
 		this.rank = 0;
 	}
 
@@ -106,9 +104,4 @@ export class Shot extends Animated {
 
 // TODO Clock
 export class Clock extends Animated {
-
-	constructor(pos : Vector, info : Object) {
-		super(pos,info);
-		console.log(arguments);
-	}
 }

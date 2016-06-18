@@ -36,9 +36,9 @@ export default class Game {
 	}
 
 	end() {
-		if(this.timer) {
-			clearInterval(this.timer);
-		}
+		// if(this.timer) {
+		// 	clearInterval(this.timer);
+		// }
 	}
 
 	add(e : Entity.Entity) : void {
@@ -69,11 +69,7 @@ export default class Game {
 			throw `type '${type}' is animated but shape '${shape}' is not check your 'grid/${this.tier.grid}.json' file`;
 
 		info = info ? JSON.parse(info) : {};
-
-		info.shape  = shape;
-		info.game  = this;
-
-		this.add(new Type(pos, info));
+		this.add(new Type(pos, shape, this, info));
 	}
 
 	start(tier : number) {
@@ -104,35 +100,17 @@ export default class Game {
 	}
 
 
-	tick(e : Entity.Entity) : void {
+	tick() : void {
 		this.entity.forEach(e => e.tick());
 	}
 
 	send_wave() {
-		this.time = Date.now();
 		if(this.waves.length == 0) {
 			this.end(); // TODO winning screen
 			return;
 		}
 
-		let [quantity,sprite,speed] = this.waves.shift();
-		this.wave = new Wave(quantity,sprite,speed,this.grid.path).start();
+		let [quantity, entity, speed, schedule, meeting] = this.waves.shift();
+
 	}
-
-	tick() {
-		let time = Date.now();
-
-		this.update(time_elapsed)
-
-		this.render.draw();
-
-		this.time = time;
-
-		if(this.wave.is_finished()) {
-			this.send_wave();
-		}
-
-		this.wave.update(time_elapsed);
-	}
-
 }
