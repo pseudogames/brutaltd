@@ -1,43 +1,76 @@
 import Vector from "./Vector";
 import Loader from "./Loader";
 
+// Space subdivision, collision
+
 export default class Grid {
 
-	static create(id : string) {
+	static load(id : string) : Promise {
 		return new Promise(
 			function (resolve, reject) {
 				Loader
 					.json("grid/"+id+".json")
 					.then(
-						(json) => {
-							resolve(new Grid(JSON.parse(json)));
-						},
-						(error) => {
-							reject(error);
-						}
+						info  => resolve(new Grid(info)),
+						error => reject(error)
 				);
 			}
 		);
 	}
 
-	constructor(info : Object) {
+	forEach(fn : Function) : Array {
+		let res = [];
+		for(let z=0; z<this.size.z; z++) {
+			res[z] = [];
+			for(let y=0; y<this.size.y; y++) {
+				res[z][y] = [];
+				for(let x=0; x<this.size.x; x++) {
+					res[z][y][x] = fn(x,y,z);
+				}
+			}
+		}
+		return res;
+	}
+
+
+	constructor(info : Object) : void {
 		this.size = new Vector(...info.size);
 		this.info = info;
 		this.path = this.info.path.map( (p) => new Vector(...p) )
-		this.base = [];
+		this.cell = [];
 		for(let z=0; z<this.size.z; z++) {
-			this.base[z] = [];
+			this.cell[z] = [];
 			for(let y=0; y<this.size.y; y++) {
-				this.base[z][y] = [];
+				this.cell[z][y] = [];
 				for(let x=0; x<this.size.x; x++) {
-					this.base[z][y][x] = this.info.sprites[this.info.base[z][y][x]];
+					this.cell[z][y][x] = new Set();
 				}
 			}
 		}
 	}
 
-	get(p : Vector) {
-		return this.base[p.z][p.y][p.x];
+	forEachItem(fn : Function) {
+		for(let z=0; z<this.size.z; z++) {
+			for(let y=0; y<this.size.y; y++) {
+				for(let x=0; x<this.size.x; x++) {
+					let items = this.info.sprites[this.info.base[z][y][x]];
+					for(let i=0; i<items.length; i++) {
+						fn(new Vector(x,y,z), items[i]);
+					}
+				}
+			}
+		}
+	}
+
+	add(e : any) : void {
+		let p : Vector = e.pos.floor();
+		if(this.cell[p.z][p.y][p.x])
+		this.cell[p.z][p.y][p.x];
+	}
+
+	get(p : Vector) : Set {
+		p = p.floor();
+		return this.cell[p.z][p.y][p.x];
 	}
 }
 

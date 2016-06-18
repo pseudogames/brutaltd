@@ -1,74 +1,138 @@
 import Vector  from "./Vector";
 import Loader  from "./Loader";
 import Grid    from "./Grid";
-import Sprites from "./Sprites";
+import {Sheet} from "./Sprite";
 import Render  from "./Render";
 import Walker  from "./Walker";
 import Wave    from "./Wave";
-import Level   from "./Level";
+import * as Entity  from "./Entity";
+
+
+// Logic to send waves
 
 export default class Game {
+
 	constructor() {
-		console.log(`There's a new game in town`);
+		console.log("There's a new game in town");
 		this.render = new Render();
+		this.entity = new Set();
+		this.state = { score: 0 };
 
 		// TODO: deal with exceptions
 		Loader
-			.json('game/game.json')
+			.json("game.json")
 			.then(
-				(game_info) => this.start(JSON.parse(game_info)),
-				(error) => console.log("error", error)
+				info  => this.init(info),
+				error => console.log("error", error)
 			);
 
 		return this;
 	}
-	start(game_info : Object) {
-		this.game_info = game_info;
-		this.load_level(0);
+
+
+	init(info : Object) {
+		this.info = info;
+		this.start(0); // TODO menu to choose
 	}
-	load_level(level_number : number) {
+
+	end() {
+		if(this.timer) {
+			clearInterval(this.timer);
+		}
+	}
+
+	add(e : Entity.Entity) : void {
+		if(e.tick) this.entity.add(e);
+		this.render.add(e);
+		this.grid.add(e);
+	}
+
+	delete(e : Entity.Entity) : void {
+		if(e.tick) this.entity.delete(e);
+		this.render.delete(e);
+		this.grid.delete(e);
+	}
+
+	deserialize(pos : Vector, serialized : string) : Entity.Entity {
+		let [,shape,,type,info] = serialized.match(/^(\w+)(\s*:\s*(\w+)\(((.*))?\))?/)
+		// for instance, "larry : Mob({health:10,speed:20})"
+
+		if(!shape) {
+			console.log("bad entity definition '"+serialized+"'");
+			return null;
+		}
+
+		let Type = type ? Entity[type] :
+			this.sheet.is_animated(shape) ? Entity.Animated : Entity.Still;
+
+		if(Type.prototype instanceof Entity.Animated && !this.sheet.is_animated(shape))
+			throw `type '${type}' is animated but shape '${shape}' is not check your 'grid/${this.tier.grid}.json' file`;
+
+		info = info ? JSON.parse(info) : {};
+
+		info.shape  = shape;
+		info.game  = this;
+
+		this.add(new Type(pos, info));
+	}
+
+	start(tier : number) {
 		this.end();
-		let level_info = this.game_info.level[level_number];
-		// TODO: deal with exceptions
-		if(level_info !== undefined) {
-			Level
-				.load(level_info)
-				.then(level => {
-					this.level = level;
-					this.render.setup(this.level.grid, this.level.sprites);
-					this.send_wave();
-				});
+		this.tier  = this.info.tier[tier];
+		this.waves = this.tier.wave.slice(); // copy
+		if(!this.tier) {
+			console.log("tier "+this.tier+" not found");
+			return;
 		}
+
+		Promise.all([
+			Sheet.load(this.tier.sheet),
+			Grid.load(this.tier.grid)
+		])
+		.then(
+			([s, g]) => {
+				this.sheet = s;
+				this.grid = g;
+				this.render.setup(g,s,this.state);
+				this.grid.forEachItem( this.deserialize.bind(this) );
+				this.send_wave(); // TODO button to start
+			},
+			error => {
+				console.log("loading tier "+tier+": "+error);
+			}
+		);
 	}
+
+
+	tick(e : Entity.Entity) : void {
+		this.entity.forEach(e => e.tick());
+	}
+
 	send_wave() {
-		this.then = Date.now();
-		let wave_sent = this.level.send_wave();
-		if(wave_sent === true) {
-			this.update();
-		} else {
-			this.end();
+		this.time = Date.now();
+		if(this.waves.length == 0) {
+			this.end(); // TODO winning screen
+			return;
 		}
+
+		let [quantity,sprite,speed] = this.waves.shift();
+		this.wave = new Wave(quantity,sprite,speed,this.grid.path).start();
 	}
-	update() {
-		this.now = Date.now();
-		let time_elapsed = (this.now - this.then);
 
-		this.render
-			.begin()
-			.enqueue_sprites(this.level.update(time_elapsed))
-			.draw()
-			.end();
+	tick() {
+		let time = Date.now();
 
-		this.then = this.now;
-		this.raf = requestAnimationFrame( ()=> this.update() );
+		this.update(time_elapsed)
 
-		if(this.level.wave_is_finished()) {
+		this.render.draw();
+
+		this.time = time;
+
+		if(this.wave.is_finished()) {
 			this.send_wave();
 		}
+
+		this.wave.update(time_elapsed);
 	}
-	end() {
-		if(this.raf) {
-			cancelAnimationFrame(this.raf);
-		}
-	}
+
 }

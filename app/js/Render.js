@@ -2,7 +2,9 @@ import Vector from "./Vector";
 import Bounds from "./Bounds";
 import Tween from "./Tween";
 import Grid from "./Grid";
-import Sprites from "./Sprites";
+import {Sheet,Frame} from "./Sprite";
+import SortedSet from "./SortedSet";
+import {Entity} from "./Entity";
 
 export default class Render {
 
@@ -12,18 +14,19 @@ export default class Render {
 		document.body.appendChild(this.canvas);
 	}
 
-	setup(grid : Grid, sprites : Sprites) {
+	setup(grid : Grid, sheet : Sheet, state : Object) {
 		this.grid = grid;
-		this.sprites = sprites;
-		this.projection = this.sprites.projection;
-		this.queue = [];
+		this.sheet = sheet;
+		this.hud = state;
+		this.projection = sheet.projection;
 
 		this.scroll_rel = 0.5;
 		this.scaler = new Tween(this, "scale", _ => this.rezoom());
 
 		this.cleanup();
+		this.entity = new SortedSet((a,b) => a.pos2d.z - b.pos2d.z);
 
-		this.resize();
+		this.resize(); // draw, request animation frame cycle
 
 		this.resizer = _ => this.resize();
 		this.zoomer = e => e.button == 1 && this.zoom();
@@ -32,11 +35,17 @@ export default class Render {
 		window.addEventListener('resize', this.resizer);
 		window.addEventListener('click', this.zoomer);
 		window.addEventListener('wheel', this.scroller);
+		this.raf = requestAnimationFrame( this.draw.bind(this) );
 
 		return this;
 	}
 
 	cleanup() {
+		delete this.entity;
+		if(this.raf) {
+			cancelAnimationFrame(this.raf);
+			delete this.raf;
+		}
 		this.scaler.cleanup();
 		window.removeEventListener('resize', this.resizer);
 		window.removeEventListener('click', this.zoomer);
@@ -64,7 +73,7 @@ export default class Render {
 			}
 		}
 
-		this.bounds.max = this.bounds.max.add(this.sprites.size);
+		this.bounds.max = this.bounds.max.add(this.sheet.size);
 		this.bounds.size = this.bounds.max.sub(this.bounds.min);
 
 		this.origin = this.projection.project(Vector.zero()).sub(this.bounds.min);
@@ -80,10 +89,14 @@ export default class Render {
 		this.rezoom();
 	}
 
+	prepare_pos() {
+		this.entity.forEach(e => e.prepare_pos());
+	}
+
 	rezoom() {
 		this.scroll_abs = Bounds.min(this.viewport.sub(this.bounds.size.scale(this.scale)), Vector.zero())
-		this.sprite_size = this.sprites.size.scale(this.scale).floor();
-		this.begin().draw().end();
+		this.size2d = this.sheet.size.scale(this.scale).floor();
+		this.prepare_pos();
 	}
 
 	zoom() {
@@ -91,67 +104,44 @@ export default class Render {
 	}
 
 	scroll(y : number) {
-		this.scroll_rel = Math.max(0,Math.min(1,this.scroll_rel + Math.sign(y)/8));
-		this.begin().draw().end();
+		this.scroll_rel = Math.max(0,Math.min(1,this.scroll_rel + Math.sign(y)/12));
+		this.prepare_pos();
 	}
 
-	grid_to_canvas(grid_pos : Vector) : Vector {
-		return this.projection.project(grid_pos)
+	pos2d(pos3d : Vector, z_offset : number) : Vector {
+		return this.projection.project(pos3d, z_offset)
 			.add(this.origin)
 			.scale(this.scale)
 			.add(this.scroll_abs.scale(this.scroll_rel));
 	}
 
-	begin() {
-		this.queue = [];
-		return this;
+	
+	add(e : Entity) {
+		this.entity.add(e);
 	}
 
-	plot(grid_pos : Vector, color : string = "rgba("+Bounds.norm(grid_pos,this.grid.size).scale(255).floor().toString()+",0.5)") {
-		let canvas_pos = this.grid_to_canvas(grid_pos).floor();
-		this.queue.push({z: canvas_pos.z, f: _ => {
-			this.screen.fillStyle = color;
-			this.screen.fillRect(canvas_pos.x, canvas_pos.y, this.sprite_size.x, this.sprite_size.y);
-		}});;
+	delete(e : Entity) {
+		this.entity.delete(e);
 	}
 
-	enqueue_sprites(sprites_to_render : Array<Object>) {
-		for(let sprite of sprites_to_render) {
-			this.sprite(sprite.grid_pos, sprite.entity, sprite.state, sprite.frame);
-		}
-		return this;
-	}
-
-	sprite(grid_pos : Vector, entity : string, state : string = "", frame : number = 0) {
-		var {img, geometry:{x,y,z,w,h}} = this.sprites.get(entity, state, frame);
-		let canvas_pos = this.grid_to_canvas(grid_pos);
-		let layer = canvas_pos.add(this.projection.project(new Vector(0,0,z)).scale(this.scale));
-		this.queue.push({z: canvas_pos.z + layer.z, f: _ => {
-			this.screen.drawImage(img, x,y,w,h, canvas_pos.x, canvas_pos.y, this.sprite_size.x, this.sprite_size.y);
-		}});;
-	}
-
-	end() {
-		this.screen.clearRect(0, 0, this.viewport.x, this.viewport.y);
-		this.queue.sort((a,b) => a.z - b.z).forEach(d => d.f());
+	blit(pos2d : Vector, frame : Frame) : void {
+		let {image, geometry:{x,y,w,h}} = frame;
+		this.screen.drawImage(
+			image, x,y,w,h,
+			pos2d.x,
+			pos2d.y,
+			this.size2d.x,
+			this.size2d.y
+		);
 	}
 
 	draw() {
-		// this.begin();
+		this.screen.clearRect(0, 0, this.viewport.x, this.viewport.y);
+		this.entity.forEach(e => e.draw());
 
-		for(let z=0; z<this.grid.size.z; z++) {
-			for(let y=0; y<this.grid.size.y; y++) {
-				for(let x=0; x<this.grid.size.x; x++) {
-					let p = new Vector(x,y,z);
-					let frame = Math.floor(Date.now() / 300) % this.sprites.animated["lava"]["still"].length;;
-					this.grid.get(p).forEach(e => e == "lava" ? this.sprite(p, e, "still", frame) : this.sprite(p, e) );
-				}
-			}
-		}
+		// TODO hud
 
-		return this;
-
-		// this.end();
+		this.raf = requestAnimationFrame( this.draw.bind(this) );
 	}
 
 }

@@ -38,8 +38,8 @@ function build() {
 	var html = gulp.src(['app/index.html'])
 			.pipe(gulp.dest('build'));
 
-	var game = gulp.src(['app/game/*'])
-			.pipe(gulp.dest('build/game'));
+	var game = gulp.src(['app/game.json'])
+			.pipe(gulp.dest('build/'));
 
 	var sprite = gulp.src(['app/sprite/*'])
 			.pipe(gulp.dest('build/sprite'));

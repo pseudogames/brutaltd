@@ -14,29 +14,29 @@
 	"animated": {
 		"mob": {
 			"pos": [0,1],
-			"entity": [0.4, "mob1", "mob2"],
-			"state": [2, "east", "south", "west", "north", "hit", "dead"]
+			"shape": [0.4, "mob1", "mob2"],
+			"cycle": [2, "east", "south", "west", "north", "hit", "dead"]
 		},
 		"tower": {
 			"pos": [0,4],
-			"entity": [0.1, "tower1", "tower2"],
-			"state": [2, "enter", 1, "east", "south", "west", "north"]
+			"shape": [0.1, "tower1", "tower2"],
+			"cycle": [2, "enter", 1, "east", "south", "west", "north"]
 		},
 		"fluid": {
 			"pos": [0,7],
-			"entity": [0, "lava"],
-			"state": [2, "still", "moving"]
+			"shape": [0, "lava"],
+			"cycle": [2, "idle", "moving"]
 		},
 		"door": {
 			"pos": [0,11],
-			"entity": [0.5, "elevator"],
-			"state": [1, "closed","prepare","opening","open"]
+			"shape": [0.5, "elevator"],
+			"cycle": [1, "closed","prepare","opening","open"]
 		}
 	},
 	"still": {
 		"base": {
 			"pos": [0,9],
-			"entity": [
+			"shape": [
 				[0.5, "wall","window","gate"],
 				[0.3, "floor","table","chairs"]
 			]

@@ -4,7 +4,7 @@ export default class Loader {
 			function (resolve, reject) {
 				var img = new Image();
 				img.onerror = e => reject(e);
-				img.onload = _ => resolve(img);
+				img.onload = () => resolve(img);
 				img.src = url;
 			}
 		);
@@ -32,6 +32,6 @@ export default class Loader {
 	}
 
 	static json(url : string) {
-		return this.text(url);
+		return Loader.text(url).then(JSON.parse);
 	}
 }

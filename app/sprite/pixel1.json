@@ -14,19 +14,19 @@
 	"animated": {
 		"mob": {
 			"pos": [0,1],
-			"entity": [0.8, "mob1"],
-			"state": [6, "east"]
+			"cycle": [6, "east"],
+			"shape": [0.8, "mob1"]
 		},
 		"fluid": {
 			"pos": [3,0],
-			"entity": [0.2, "lava"],
-			"state": [3, "still"]
+			"cycle": [3, "idle"],
+			"shape": [0.2, "lava"]
 		}
 	},
 	"still": {
 		"base": {
 			"pos": [0,0],
-			"entity": [
+			"shape": [
 				[0.4, "wall", 0.3, "floor","table"]
 			]
 		}
