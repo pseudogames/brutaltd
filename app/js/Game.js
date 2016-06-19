@@ -54,16 +54,17 @@ export default class Game {
 		// for instance, "larry : Mob({health:10,speed:20})"
 
 		if(!shape) {
-			console.log("bad entity definition '"+serialized+"'");
-			return null;
+			throw "bad entity definition '"+serialized+"'";
 		}
 
 		let Type = type ? Entity[type] :
 			this.sheet.is_animated(shape) ? Entity.Animated : Entity.Still;
 
+		if(!Type) {
+			throw `type '${type}' does not exist, review 'grid/${this.tier.grid}.json' file`;
+		}
 		if(Type.prototype instanceof Entity.Animated && !this.sheet.is_animated(shape)) {
-			console.log(`type '${type}' is animated but shape '${shape}' is not check your 'grid/${this.tier.grid}.json' file`);
-			return;
+			throw `type '${type}' is animated but shape '${shape}' is not check 'grid/${this.tier.grid}.json' file`;
 		}
 
 		info = info ? JSON.parse(info.replace(/'/g,'"')) : {};

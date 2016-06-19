@@ -38,10 +38,6 @@ export class Still extends Entity {
 
 export class Animated extends Entity {
 
-	constructor(pos : Vector, shape : string, game : Game, info : Object) {
-		super(pos, shape, game, info);
-	}
-
 	tick() {
 		// loop animation
 		
@@ -50,6 +46,13 @@ export class Animated extends Entity {
 		}
 	}
 
+}
+
+export class Site extends Animated {
+
+	click() {
+		// TODO build tower
+	}
 }
 
 export class Mob extends Animated {
@@ -121,6 +124,10 @@ export class Tower extends Animated {
 	constructor(pos : Vector, shape : string, game : Game, info : Object) {
 		super(pos, shape, game, info);
 		this.rank = 0;
+	}
+
+	click() {
+		// TODO upgrade tower
 	}
 
 	tick() {

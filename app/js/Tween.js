@@ -1,5 +1,5 @@
 export default class Tween {
-	constructor(obj : Object, key : string, change : Function, fps : number = 30) {
+	constructor(obj : Object, key : string, change : Function, fps : number) {
 		this.object = obj;
 		this.key = key;
 		this.change = change;

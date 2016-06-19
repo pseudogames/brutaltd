@@ -12,7 +12,7 @@
 		"#": ["wall"],
 		"o": ["table"],
 		"_": ["floor"],
-		"~": ["lava"],
+		"~": ["lava : Site()"],
 		"0": ["lava : Clock({'type':'analog'})"],
 		" ": []
 	},
