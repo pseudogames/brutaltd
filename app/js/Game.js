@@ -12,15 +12,15 @@ export default class Game {
 
 	constructor() {
 		this.render = new Render();
-		this.entity = new Set();
 		this.time = {};
+		this.running = false;
 
 		// TODO: deal with exceptions
 		Loader
 			.json("game.json")
 			.then(
 				info  => this.init(info),
-				error => console.log("error", error)
+				error => { throw "error loading game: "+error }
 			);
 	}
 
@@ -64,19 +64,31 @@ export default class Game {
 		if(Type.prototype instanceof Entity.Animated && !this.sheet.is_animated(shape))
 			throw `type '${type}' is animated but shape '${shape}' is not check your 'grid/${this.tier.grid}.json' file`;
 
-		info = info ? JSON.parse(info) : {};
+		info = info ? JSON.parse(info.replace(/'/g,'"')) : {};
 		return new Type(pos, shape, this, info);
 	}
 
 	start(tier : number) {
 		this.stop();
 
+		this.entity = new Set();
 		this.tier  = this.info.tier[tier];
-		this.waves = this.tier.wave.slice(); // copy
+
 		if(!this.tier) {
-			console.log("tier "+this.tier+" not found");
-			return;
+			throw "tier "+this.tier+" not found";
 		}
+
+		this.lives = this.tier.lives;
+		this.wave = this.tier.wave.map(wave => {
+			let [quantity, entity, schedule, meeting] = wave;
+			return {
+				quantity: quantity,
+				entity:   entity,
+				schedule: schedule,
+				time: schedule,
+				meeting:  meeting
+			};
+		});
 
 		Promise.all([
 			Sheet.load(this.tier.sheet),
@@ -86,19 +98,29 @@ export default class Game {
 			([s, g]) => {
 				this.sheet = s;
 				this.grid = g;
-				this.clock(true);
+
+				this.time.start = Date.now();
+				this.time.real = 0;
+				this.time.virtual = 0;
+				this.time.animation = 0;
+				this.time.open = this.wave[0].schedule - 1;
+
 				this.render.setup(g,s);
 				this.sheet.setup(this.time);
 				this.grid.setup( (p,e) => this.add( this.deserialize(p,e) ) );
+
+				this.running = true;
 				this.speed(1);
 			},
 			error => {
-				console.log("loading tier "+tier+": "+error);
+				throw "loading tier "+tier+": "+error;
 			}
 		);
 	}
 
 	speed(s : number) : void {
+		if(!this.sheet || this.sheet.delay == 0)
+			return;
 		this.stop();
 		this.time.speed = s;
 		let d = Math.floor(this.sheet.delay / s);
@@ -107,44 +129,85 @@ export default class Game {
 		}
 	}
 
-	clock(reset : ?boolean = false) {
+	clock(next : boolean = false) {
+		const analog_to_virtual = 60000; // hour to millisec
 		let time = Date.now();
-		if(reset) {
-			this.time.speed = 1;
-			this.time.start = time;
-			this.time.real = 0;
-			this.time.virtual = 0;
-		}
 		let real = time - this.time.start;
 		let delta = real - this.time.real;
 		this.time.real = real;
-		this.time.virtual += delta * this.time.speed;
+		if(next && this.wave.length > 0) {
+			this.time.virtual = (this.wave[0].time - this.time.open) * analog_to_virtual;
+		} else {
+			this.time.virtual += delta * this.time.speed;
+		}
 		this.time.animation = this.time.virtual;
-		this.time.analog = this.time.virtual / 60000 + 7;
+
+		if(!this.running)
+			return;
+
+		this.time.analog = this.time.virtual / analog_to_virtual + this.time.open;
+
 		let hh = ""+Math.floor(this.time.analog);
 		let mm = ""+(Math.floor(this.time.analog * 60) % 60);
 		this.time.digital = hh+":"+(mm.length == 1 ? "0" : "")+mm;
-		document.getElementById("clock").innerText = this.time.digital; // FIXME
+		document.getElementById("clock").innerText = this.time.digital + 
+				(this.wave.length == 0 ? "" :
+					" (" + this.wave[0].schedule + "h " + 
+						this.wave[0].meeting + ") ");
+	}
+
+	next() : void {
+		if(!this.running || !this.wave || this.wave.length == 0)
+			return;
+		this.clock(true);
+	}
+
+	arrival() : void {
+		if(this.wave.length == 0)
+			return;
+
+		let wave = this.wave[0];
+		if(wave.time < this.time.analog) {
+			if(wave.quantity --> 0) {
+				this.add( this.deserialize(this.grid.path[0], wave.entity) );
+				wave.time += 1/60;
+			} else {
+				this.wave.shift();
+			}
+		}
+	}
+
+	ended() : boolean {
+		if(this.running) {
+			let result;
+			if(this.wave.length == 0 && Entity.Mob.count == 0) {
+				result = "won";
+				this.running = false;
+			} else if(this.lives <= 0) {
+				result = "lost";
+				this.running = false;
+			} else {
+				result = this.lives + " lives";
+			}
+			document.getElementById("state").innerText = result;
+		}
+		return !this.running;
 	}
 
 	tick() : void {
 		this.clock();
 
-		this.entity.forEach(e => e.tick());
+		if(!this.ended()) {
+			this.arrival();
+
+			this.entity.forEach(e => e.tick());
+		}
 
 		this.render.draw();
 	}
 
 	send_wave() {
-		if(this.waves.length == 0) {
-			this.stop(); // TODO winning screen
-			return;
-		}
 
-		let [quantity, entity, schedule, meeting] = this.waves.shift();
-		while(quantity --> 0) {
-			this.add( this.deserialize(this.grid.path[0], entity) );
-		}
 
 	}
 }

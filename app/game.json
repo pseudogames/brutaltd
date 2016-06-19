@@ -3,17 +3,19 @@
 		{
 			"sheet": "pixel1",
 			"grid": "test",
+			"lives": 10,
 			"wave": [
-				[ 5,  "mob1 : Mob({\"speed\":1})", 10, "standup"],
-				[10,  "mob1 : Mob({\"speed\":2})", 13, "planning"],
-				[15,  "mob1 : Mob({\"speed\":3})", 14, "review"],
-				[ 5,  "mob1 : Mob({\"speed\":4})", 16, "retrospective"],
-				[10,  "mob1 : Mob({\"speed\":5})", 18, "replanning"]
+				[ 5,  "mob1 : Mob({'speed':1})", 10, "standup"],
+				[10,  "mob1 : Mob({'speed':2})", 13, "planning"],
+				[15,  "mob1 : Mob({'speed':3})", 14, "review"],
+				[ 5,  "mob1 : Mob({'speed':4})", 16, "retrospective"],
+				[10,  "mob1 : Mob({'speed':5})", 18, "replanning"]
 			]
 		},
 		{
 			"sheet": "sample",
 			"grid": "test_alternative_grid",
+			"lives": 5,
 			"wave": [
 				[10, "mob1", 1, 10, "strategic"],
 				[10, "mob1", 1, 11, "budget"],

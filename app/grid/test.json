@@ -13,7 +13,7 @@
 		"o": ["table"],
 		"_": ["floor"],
 		"~": ["lava"],
-		"0": ["lava : Clock({\"type\":\"analog\"})"],
+		"0": ["lava : Clock({'type':'analog'})"],
 		" ": []
 	},
 	"base": [

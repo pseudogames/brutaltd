@@ -63,10 +63,14 @@ export class Mob extends Animated {
 		this.path_instructions = instructions;
 		this.next_instruction();
 		this.completed_path = false;
+		Mob.count ++;
 	}
 
 	move(amount) {
-		if(this.completed_path === true || this.current_instruction == undefined) return this.remove();
+		if(this.completed_path === true || this.current_instruction == undefined) {
+			this.game.lives --;
+			return this.remove();
+		}
 
 		let {x : nx, y : ny} = this.current_instruction;
 		let {x,y}        = this.pos;
@@ -97,6 +101,7 @@ export class Mob extends Animated {
 
 	remove() {
 		this.game.delete(this);
+		Mob.count --;
 	}
 
 	tick() {

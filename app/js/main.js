@@ -11,3 +11,8 @@ for(let b of document.querySelectorAll('.start')) {
 for(let b of document.querySelectorAll('.speed')) {
 	b.addEventListener("click", (e) => game.speed(parseInt(e.target.getAttribute("data-level"))) );
 }
+
+for(let b of document.querySelectorAll('.next')) {
+	b.addEventListener("click", (e) => game.next() );
+}
+
