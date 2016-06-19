@@ -50,7 +50,7 @@ export default class Grid {
 		}
 	}
 
-	forEachItem(fn : Function) {
+	setup(fn : Function) {
 		for(let z=0; z<this.size.z; z++) {
 			for(let y=0; y<this.size.y; y++) {
 				for(let x=0; x<this.size.x; x++) {

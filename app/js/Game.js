@@ -13,7 +13,7 @@ export default class Game {
 	constructor() {
 		this.render = new Render();
 		this.entity = new Set();
-		this.state = { score: 0 };
+		this.time = {};
 
 		// TODO: deal with exceptions
 		Loader
@@ -30,9 +30,10 @@ export default class Game {
 		this.start(0); // TODO menu to choose
 	}
 
-	end() {
-		if(this.timer) {
-			clearInterval(this.timer);
+	stop() {
+		if(this.time.interval) {
+			clearInterval(this.time.interval);
+			delete this.time.interval;
 		}
 	}
 
@@ -68,9 +69,8 @@ export default class Game {
 	}
 
 	start(tier : number) {
-		this.end();
-		this.opening = Date.now();
-		this.time = 0;
+		this.stop();
+
 		this.tier  = this.info.tier[tier];
 		this.waves = this.tier.wave.slice(); // copy
 		if(!this.tier) {
@@ -86,10 +86,11 @@ export default class Game {
 			([s, g]) => {
 				this.sheet = s;
 				this.grid = g;
-				this.render.setup(g,s,this.state);
-				this.grid.forEachItem( (p,e) => this.add( this.deserialize(p,e) ) );
-				this.timer = setInterval(this.tick.bind(this), this.sheet.delay);
-				this.send_wave(); // TODO button to start
+				this.clock(true);
+				this.render.setup(g,s);
+				this.sheet.setup(this.time);
+				this.grid.setup( (p,e) => this.add( this.deserialize(p,e) ) );
+				this.speed(1);
 			},
 			error => {
 				console.log("loading tier "+tier+": "+error);
@@ -97,8 +98,37 @@ export default class Game {
 		);
 	}
 
+	speed(s : number) : void {
+		this.stop();
+		this.time.speed = s;
+		let d = Math.floor(this.sheet.delay / s);
+		if(d > 0) {
+			this.time.interval = setInterval(this.tick.bind(this), d);
+		}
+	}
+
+	clock(reset : ?boolean = false) {
+		let time = Date.now();
+		if(reset) {
+			this.time.speed = 1;
+			this.time.start = time;
+			this.time.real = 0;
+			this.time.virtual = 0;
+		}
+		let real = time - this.time.start;
+		let delta = real - this.time.real;
+		this.time.real = real;
+		this.time.virtual += delta * this.time.speed;
+		this.time.animation = this.time.virtual;
+		this.time.analog = this.time.virtual / 60000 + 7;
+		let hh = ""+Math.floor(this.time.analog);
+		let mm = ""+(Math.floor(this.time.analog * 60) % 60);
+		this.time.digital = hh+":"+(mm.length == 1 ? "0" : "")+mm;
+		document.getElementById("clock").innerText = this.time.digital; // FIXME
+	}
+
 	tick() : void {
-		this.time = Date.now() - this.opening;
+		this.clock();
 
 		this.entity.forEach(e => e.tick());
 
@@ -107,7 +137,7 @@ export default class Game {
 
 	send_wave() {
 		if(this.waves.length == 0) {
-			this.end(); // TODO winning screen
+			this.stop(); // TODO winning screen
 			return;
 		}
 

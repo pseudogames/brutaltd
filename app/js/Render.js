@@ -14,10 +14,9 @@ export default class Render {
 		document.body.appendChild(this.canvas);
 	}
 
-	setup(grid : Grid, sheet : Sheet, state : Object) {
+	setup(grid : Grid, sheet : Sheet) {
 		this.grid = grid;
 		this.sheet = sheet;
-		this.hud = state;
 		this.projection = sheet.projection;
 
 		this.scroll_rel = 0.5;
@@ -36,6 +35,9 @@ export default class Render {
 		window.addEventListener('click', this.zoomer);
 		window.addEventListener('wheel', this.scroller);
 		// this.raf = requestAnimationFrame( this.draw.bind(this) );
+
+		this.timestamp = 0;
+		this.delay = 1000 / 30;
 
 		return this;
 	}
@@ -136,11 +138,13 @@ export default class Render {
 	}
 
 	draw() {
+		let time = Date.now();
+		if(time < this.timestamp + this.delay)
+			return;
+		this.timestamp = time;
+
 		this.screen.clearRect(0, 0, this.viewport.x, this.viewport.y);
 		this.entity.forEach(e => e.draw());
-
-		// TODO hud
-
 	}
 
 }

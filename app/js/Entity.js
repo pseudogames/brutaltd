@@ -12,7 +12,7 @@ export class Entity {
 		this.sheet = game.sheet;
 		this.render = game.render;
 		this.sprite = {
-			state: this.sheet.initial_state(this.game.time, shape),
+			state: this.sheet.initial_state(shape),
 			z_offset: this.sheet.get_z(shape)
 		};
 		this.prepare_frame();
@@ -45,7 +45,7 @@ export class Animated extends Entity {
 	tick() {
 		// loop animation
 		
-		if(this.sheet.animate(this.game.time, this.sprite.state)) {
+		if(this.sheet.animate(this.sprite.state)) {
 			this.prepare_frame();
 		}
 	}

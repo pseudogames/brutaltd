@@ -125,6 +125,10 @@ export class Sheet {
 
 	}
 
+	setup(time : Object) {
+		this.time = time;
+	}
+
 	is_animated(shape : string) : boolean {
 		if(this.animated[shape]) return true;
 		if(this.still[shape]) return false;
@@ -135,19 +139,19 @@ export class Sheet {
 		return this.z_offset[shape];
 	}
 
-	initial_state(time : number, shape : string, cycle : string = "idle") : State {
+	initial_state(shape : string, cycle : string = "idle") : State {
 		let d : State = {shape: shape};
 		if(this.animated[shape]) {
 			d.cycle = cycle;
 			d.frame = cycle == "idle" ? Math.floor(Math.random() * this.animated[shape][cycle].length) : 0;
-			d.timestamp = time || 0;
+			d.timestamp = this.time.animation;
 		}
 		return d;
 	}
 
-	animate(time : number, d : State, next_cycle : ?string) : boolean {
-		if(time > d.timestamp + this.delay) {
-			d.timestamp = time;
+	animate(d : State, next_cycle : ?string) : boolean {
+		if(this.time.animation > d.timestamp + this.delay) {
+			d.timestamp = this.time.animation;
 			d.frame++;
 			if(d.frame >= this.animated[d.shape][d.cycle].length) {
 				d.frame = 0;
