@@ -61,8 +61,10 @@ export default class Game {
 		let Type = type ? Entity[type] :
 			this.sheet.is_animated(shape) ? Entity.Animated : Entity.Still;
 
-		if(Type.prototype instanceof Entity.Animated && !this.sheet.is_animated(shape))
-			throw `type '${type}' is animated but shape '${shape}' is not check your 'grid/${this.tier.grid}.json' file`;
+		if(Type.prototype instanceof Entity.Animated && !this.sheet.is_animated(shape)) {
+			console.log(`type '${type}' is animated but shape '${shape}' is not check your 'grid/${this.tier.grid}.json' file`);
+			return;
+		}
 
 		info = info ? JSON.parse(info.replace(/'/g,'"')) : {};
 		return new Type(pos, shape, this, info);
@@ -103,6 +105,7 @@ export default class Game {
 				this.time.real = 0;
 				this.time.virtual = 0;
 				this.time.animation = 0;
+				this.time.skip = 0;
 				this.time.open = this.wave[0].schedule - 1;
 
 				this.render.setup(g,s);
@@ -135,17 +138,15 @@ export default class Game {
 		let real = time - this.time.start;
 		let delta = real - this.time.real;
 		this.time.real = real;
-		if(next && this.wave.length > 0) {
-			this.time.virtual = (this.wave[0].time - this.time.open) * analog_to_virtual;
-		} else {
-			this.time.virtual += delta * this.time.speed;
-		}
-		this.time.animation = this.time.virtual;
+		this.time.virtual += delta * this.time.speed;
 
 		if(!this.running)
 			return;
 
-		this.time.analog = this.time.virtual / analog_to_virtual + this.time.open;
+		if(next && this.wave.length > 0) {
+			this.time.skip += this.wave[0].time - this.time.analog;
+		}
+		this.time.analog = this.time.virtual / analog_to_virtual + this.time.open + this.time.skip;
 
 		let hh = ""+Math.floor(this.time.analog);
 		let mm = ""+(Math.floor(this.time.analog * 60) % 60);

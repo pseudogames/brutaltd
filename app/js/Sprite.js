@@ -144,14 +144,14 @@ export class Sheet {
 		if(this.animated[shape]) {
 			d.cycle = cycle;
 			d.frame = cycle == "idle" ? Math.floor(Math.random() * this.animated[shape][cycle].length) : 0;
-			d.timestamp = this.time.animation;
+			d.timestamp = this.time.virtual;
 		}
 		return d;
 	}
 
 	animate(d : State, next_cycle : ?string) : boolean {
-		if(this.time.animation > d.timestamp + this.delay) {
-			d.timestamp = this.time.animation;
+		if(this.time.virtual > d.timestamp + this.delay) {
+			d.timestamp = this.time.virtual;
 			d.frame++;
 			if(d.frame >= this.animated[d.shape][d.cycle].length) {
 				d.frame = 0;

@@ -63,6 +63,7 @@ export class Mob extends Animated {
 		this.path_instructions = instructions;
 		this.next_instruction();
 		this.completed_path = false;
+		this.timestamp = this.game.time.virtual;
 		Mob.count ++;
 	}
 
@@ -106,8 +107,10 @@ export class Mob extends Animated {
 
 	tick() {
 		// move through the path
-		//super.tick();
-		this.move(1);
+		super.tick();
+		let delta = (this.game.time.virtual - this.timestamp) / 1000;
+		this.timestamp = this.game.time.virtual;
+		this.move(delta);
 		this.prepare_frame();
 		this.prepare_pos();
 	}

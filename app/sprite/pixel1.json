@@ -2,26 +2,26 @@
 	"size": [50,66],
 	"fps": 6,
 	"projection": [
-		[ 32,  8,  8],
-		[-15, 15, 16],
-		[  0,-41, 48]
+		[ 32,  8, 0.2],
+		[-15, 15, 1.0],
+		[  0,-41, 1.0]
 	],
 	"faces" : {
-		"01"  : "east",
-		"0-1" : "east",
-		"10"  : "east",
-		"-10" : "east"
+		"01"  : "idle",
+		"0-1" : "idle",
+		"10"  : "idle",
+		"-10" : "idle"
 	},
 	"animated": {
 		"mob": {
 			"pos": [0,1],
-			"cycle": [5, "east", 1, "idle"],
-			"shape": [0.8, "mob1"]
+			"cycle": [6, "idle"],
+			"shape": [0.9, "mob1"]
 		},
 		"fluid": {
 			"pos": [3,0],
 			"cycle": [3, "idle"],
-			"shape": [0.2, "lava"]
+			"shape": [0.3, "lava"]
 		}
 	},
 	"still": {
