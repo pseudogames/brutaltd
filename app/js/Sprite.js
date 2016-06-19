@@ -17,7 +17,8 @@ export type Frame = {
 export type State = {
 	shape: string,
 	cycle?: string,
-	frame?: number
+	frame?: number,
+	timestamp?: number
 };
 
 export class Sheet {
@@ -116,6 +117,7 @@ export class Sheet {
 		this.z_offset = {};
 		this.build_index_still(info);
 		this.build_index_animated(info);
+		this.delay = 1000 / this.info.fps;
 
 		let invalid = Object.keys(this.animated).filter(s => !this.animated[s].hasOwnProperty("idle"));
 		if(invalid.length > 0)
@@ -123,14 +125,37 @@ export class Sheet {
 
 	}
 
-	is_animated(shape : string) : number {
-		if(this.animated[shape]) return 1;
-		if(this.still[shape]) return 0;
+	is_animated(shape : string) : boolean {
+		if(this.animated[shape]) return true;
+		if(this.still[shape]) return false;
 		throw `no sprite for shape '${shape}'`;
 	}
 
 	get_z(shape : string) : number {
 		return this.z_offset[shape];
+	}
+
+	initial_state(time : number, shape : string, cycle : string = "idle") : State {
+		let d : State = {shape: shape};
+		if(this.animated[shape]) {
+			d.cycle = cycle;
+			d.frame = cycle == "idle" ? Math.floor(Math.random() * this.animated[shape][cycle].length) : 0;
+			d.timestamp = time || 0;
+		}
+		return d;
+	}
+
+	animate(time : number, d : State, next_cycle : ?string) : boolean {
+		if(time > d.timestamp + this.delay) {
+			d.timestamp = time;
+			d.frame++;
+			if(d.frame >= this.animated[d.shape][d.cycle].length) {
+				d.frame = 0;
+				if(next_cycle) d.cycle = next_cycle;
+			}
+			return true;
+		}
+		return false;
 	}
 
 	get(d : State) : Object {

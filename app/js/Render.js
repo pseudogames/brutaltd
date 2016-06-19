@@ -35,17 +35,17 @@ export default class Render {
 		window.addEventListener('resize', this.resizer);
 		window.addEventListener('click', this.zoomer);
 		window.addEventListener('wheel', this.scroller);
-		this.raf = requestAnimationFrame( this.draw.bind(this) );
+		// this.raf = requestAnimationFrame( this.draw.bind(this) );
 
 		return this;
 	}
 
 	cleanup() {
 		delete this.entity;
-		if(this.raf) {
-			cancelAnimationFrame(this.raf);
-			delete this.raf;
-		}
+		// if(this.raf) {
+		// 	cancelAnimationFrame(this.raf);
+		// 	delete this.raf;
+		// }
 		this.scaler.cleanup();
 		window.removeEventListener('resize', this.resizer);
 		window.removeEventListener('click', this.zoomer);
@@ -141,7 +141,6 @@ export default class Render {
 
 		// TODO hud
 
-		this.raf = requestAnimationFrame( this.draw.bind(this) );
 	}
 
 }

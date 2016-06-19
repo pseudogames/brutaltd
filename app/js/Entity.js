@@ -9,21 +9,14 @@ export class Entity {
 		this.pos = pos;
 		this.info = info;
 		this.game = game;
-		this.shape = shape;
 		this.sheet = game.sheet;
 		this.render = game.render;
-		this.init();
+		this.sprite = {
+			state: this.sheet.initial_state(this.game.time, shape),
+			z_offset: this.sheet.get_z(shape)
+		};
 		this.prepare_frame();
 		this.prepare_pos();
-	}
-
-	init() {
-		this.sprite = {
-			state: {
-				shape: this.shape
-			},
-			z_offset: this.sheet.get_z(this.shape)
-		};
 	}
 
 	prepare_frame() {
@@ -49,15 +42,12 @@ export class Animated extends Entity {
 		super(pos, shape, game, info);
 	}
 
-	init() {
-		super.init();
-		this.sprite.state.cycle = "idle";
-		this.sprite.state.frame = 0;
-	}
-
-	tick(time : number) {
+	tick() {
 		// loop animation
-		this.prepare_frame();
+		
+		if(this.sheet.animate(this.game.time, this.sprite.state)) {
+			this.prepare_frame();
+		}
 	}
 
 }
@@ -109,13 +99,12 @@ export class Mob extends Animated {
 		this.game.delete(this);
 	}
 
-	tick(time : number) {
+	tick() {
 		// move through the path
-		//super.tick(time);
+		//super.tick();
 		this.move(1);
 		this.prepare_frame();
 		this.prepare_pos();
-		// return res;
 	}
 }
 
@@ -126,9 +115,9 @@ export class Tower extends Animated {
 		this.rank = 0;
 	}
 
-	tick(time : number) {
+	tick() {
 		// point and shoot mobs on range
-		//super.tick(time);
+		//super.tick();
 		this.prepare_frame();
 		this.game.add(new Shot(this.pos,this.info));
 		return res;
@@ -144,14 +133,15 @@ export class Tower extends Animated {
 
 export class Shot extends Animated {
 	
-	tick(time : number) {
+	tick() {
 		// balistic movement and collision check
-		super.tick(time);
+		super.tick();
 	}
+}
+
+export class Clock extends Animated {
+	// TODO Clock
 }
 
 // TODO Elevator
 
-// TODO Clock
-export class Clock extends Animated {
-}

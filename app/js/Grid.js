@@ -1,5 +1,6 @@
 import Vector from "./Vector";
 import Loader from "./Loader";
+import {Entity} from "./Entity";
 
 // Space subdivision, collision
 
@@ -62,10 +63,14 @@ export default class Grid {
 		}
 	}
 
-	add(e : any) : void {
+	add(e : Entity) : void {
 		let p : Vector = e.pos.floor();
-		if(this.cell[p.z][p.y][p.x])
-		this.cell[p.z][p.y][p.x];
+		this.cell[p.z][p.y][p.x].add(e);
+	}
+
+	delete(e : Entity) : void {
+		let p : Vector = e.pos.floor();
+		this.cell[p.z][p.y][p.x].delete(e);
 	}
 
 	get(p : Vector) : Set {
@@ -73,9 +78,6 @@ export default class Grid {
 		return this.cell[p.z][p.y][p.x];
 	}
 
-	delete(e : any) : void {
-		//TODO
-	}
 }
 
 

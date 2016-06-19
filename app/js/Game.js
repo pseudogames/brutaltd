@@ -11,7 +11,6 @@ import * as Entity  from "./Entity";
 export default class Game {
 
 	constructor() {
-		console.log("There's a new game in town");
 		this.render = new Render();
 		this.entity = new Set();
 		this.state = { score: 0 };
@@ -23,8 +22,6 @@ export default class Game {
 				info  => this.init(info),
 				error => console.log("error", error)
 			);
-
-		return this;
 	}
 
 
@@ -34,9 +31,9 @@ export default class Game {
 	}
 
 	end() {
-		// if(this.timer) {
-		// 	clearInterval(this.timer);
-		// }
+		if(this.timer) {
+			clearInterval(this.timer);
+		}
 	}
 
 	add(e : Entity.Entity) : void {
@@ -72,6 +69,8 @@ export default class Game {
 
 	start(tier : number) {
 		this.end();
+		this.opening = Date.now();
+		this.time = 0;
 		this.tier  = this.info.tier[tier];
 		this.waves = this.tier.wave.slice(); // copy
 		if(!this.tier) {
@@ -89,6 +88,7 @@ export default class Game {
 				this.grid = g;
 				this.render.setup(g,s,this.state);
 				this.grid.forEachItem( (p,e) => this.add( this.deserialize(p,e) ) );
+				this.timer = setInterval(this.tick.bind(this), this.sheet.delay);
 				this.send_wave(); // TODO button to start
 			},
 			error => {
@@ -97,9 +97,12 @@ export default class Game {
 		);
 	}
 
-
 	tick() : void {
-		this.entity.forEach(e => e.tick(1));
+		this.time = Date.now() - this.opening;
+
+		this.entity.forEach(e => e.tick());
+
+		this.render.draw();
 	}
 
 	send_wave() {
@@ -113,6 +116,5 @@ export default class Game {
 			this.add( this.deserialize(this.grid.path[0], entity) );
 		}
 
-		setInterval(()=> this.tick(), 500);
 	}
 }
