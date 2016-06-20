@@ -12,7 +12,9 @@ export default class SortedSet {
 	}
 
 	delete(val : any) : void {
-		this.list.splice(this.list.indexOf(val),1);
+		let i = this.list.indexOf(val);
+		if(i<0 || i>=this.list.length) return;
+		this.list.splice(i,1);
 	}
 
 	forEach(fn : Function) : void {
