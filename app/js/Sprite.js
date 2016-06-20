@@ -149,8 +149,8 @@ export class Sheet {
 		return d;
 	}
 
-	animate(d : State, next_cycle : ?string) : boolean {
-		if(this.time.virtual > d.timestamp + this.delay) {
+	animate(d : State, speed : number = 1, next_cycle : ?string) : boolean {
+		if(this.time.virtual > d.timestamp + this.delay / speed) {
 			d.timestamp = this.time.virtual;
 			d.frame++;
 			if(d.frame >= this.animated[d.shape][d.cycle].length) {

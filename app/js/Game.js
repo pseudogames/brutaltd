@@ -108,6 +108,7 @@ export default class Game {
 				this.time.animation = 0;
 				this.time.skip = 0;
 				this.time.open = this.wave[0].schedule - 1;
+				this.delay_between_mobs = 1/60; // hours on analog clock
 
 				this.render.setup(g,s);
 				this.sheet.setup(this.time);
@@ -128,6 +129,7 @@ export default class Game {
 		this.stop();
 		this.time.speed = s;
 		let d = Math.floor(this.sheet.delay / s);
+
 		if(d > 0) {
 			this.time.interval = setInterval(this.tick.bind(this), d);
 		}
@@ -145,7 +147,9 @@ export default class Game {
 			return;
 
 		if(next && this.wave.length > 0) {
-			this.time.skip += this.wave[0].time - this.time.analog;
+			let s = this.wave[0].time - this.time.analog;
+			if(s > this.delay_between_mobs)
+				this.time.skip += s;
 		}
 		this.time.analog = this.time.virtual / analog_to_virtual + this.time.open + this.time.skip;
 
@@ -172,7 +176,7 @@ export default class Game {
 		if(wave.time < this.time.analog) {
 			if(wave.quantity --> 0) {
 				this.add( this.deserialize(this.grid.path[0], wave.entity) );
-				wave.time += 1/60;
+				wave.time += this.delay_between_mobs;
 			} else {
 				this.wave.shift();
 			}

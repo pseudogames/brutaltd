@@ -46,7 +46,7 @@ export class Animated extends Entity {
 	tick() {
 		// loop animation
 		
-		if(this.sheet.animate(this.sprite.state)) {
+		if(this.sheet.animate(this.sprite.state, this.info.speed || 1)) {
 			this.frame();
 		}
 	}
@@ -66,10 +66,13 @@ export class Mobile extends Animated {
 
 	init() {
 		this.vel = this.info.vel;
+		this.moved_at = this.game.time.virtual;
 	}
 
 	move() {
-		this.pos = this.pos.add(this.vel)
+		let delta = this.game.time.virtual - this.moved_at;
+		this.moved_at = this.game.time.virtual;
+		this.pos = this.pos.add(this.vel.scale(delta/1000));
 	}
 
 	tick() {
@@ -93,7 +96,7 @@ export class Mob extends Mobile {
 		this.path_instructions = instructions;
 		this.next_instruction();
 		this.completed_path = false;
-		this.timestamp = this.game.time.virtual;
+		this.moved_at = this.game.time.virtual;
 		Mob.count ++;
 	}
 
@@ -137,8 +140,8 @@ export class Mob extends Mobile {
 
 	move() {
 		// move through the path
-		let delta = (this.game.time.virtual - this.timestamp) / 1000;
-		this.timestamp = this.game.time.virtual;
+		let delta = (this.game.time.virtual - this.moved_at) / 1000;
+		this.moved_at = this.game.time.virtual;
 		this.walk(delta);
 	}
 }
@@ -150,6 +153,7 @@ export class Tower extends Animated {
 		this.rank = 0;
 		this.forward = new Vector(1,0,0.2);
 		this.target = null;
+		this.shot_at = this.game.time.virtual;
 	}
 
 	click() {
@@ -160,9 +164,10 @@ export class Tower extends Animated {
 	tick() {
 		// point and shoot mobs on range
 		super.tick();
-		this.frame();
 
-		if(Math.random()<0.05) {
+		let delay = 1000 / (this.info.shot.rate || 1);
+		if(this.game.time.virtual > this.shot_at + delay) {
+			this.shot_at = this.game.time.virtual;
 			this.game.add(new Shot(
 				this.game,
 				this.pos,
@@ -191,12 +196,6 @@ export class Shot extends Mobile {
 		super.move();
 	}
 
-	tick() {
-		super.tick();
-
-		if(Math.random() < 0.01) 
-			this.game.delete(this);
-	}
 }
 
 export class Clock extends Animated {
