@@ -1,16 +1,16 @@
 export default class Vector {
 
-	static copy(v : Vector) : Vector {
-		return new Vector(v.x,v.y,v.z);
+	constructor(x : number = 0, y : number = 0, z : number = 0) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
 	}
 
-	constructor(x,y,z) {
-		this.x = x || 0; // Number
-		this.y = y || 0; // Number
-		this.z = z || 0; // Number
+	copy() : Vector {
+		return new Vector(this.x, this.y, this.z);
 	}
 
-	add(v) : Vector {
+	add(v : Vector) : Vector {
 		return new Vector(
 			this.x + v.x,
 			this.y + v.y,
@@ -18,7 +18,7 @@ export default class Vector {
 		);
 	}
 
-	sub(v) : Vector {
+	sub(v : Vector) : Vector {
 		return new Vector(
 			this.x - v.x,
 			this.y - v.y,
@@ -26,7 +26,7 @@ export default class Vector {
 		);
 	}
 
-	scale(a) : Vector {
+	scale(a : number) : Vector {
 		return new Vector(
 			this.x * a,
 			this.y * a,
@@ -48,6 +48,12 @@ export default class Vector {
 			Math.sign(this.y),
 			Math.sign(this.z)
 		);
+	}
+
+	equals(v : Vector) : boolean {
+		return this.x == v.x &&
+		       this.y == v.y &&
+		       this.z == v.z;
 	}
 
 	static zero() : Vector {

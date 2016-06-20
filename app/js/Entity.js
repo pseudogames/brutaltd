@@ -5,30 +5,35 @@ import Game   from "./Game";
 
 export class Entity {
 		
-	constructor(pos : Vector, shape : string, game : Game, info : Object) {
+	constructor(game : Game, pos : Vector, shape : string, info : Object) {
 		this.pos = pos;
 		this.info = info;
 		this.game = game;
+		this.grid = game.grid;
 		this.sheet = game.sheet;
 		this.render = game.render;
 		this.sprite = {
 			state: this.sheet.initial_state(shape),
 			z_offset: this.sheet.get_z(shape)
 		};
-		this.prepare_frame();
-		this.prepare_pos();
+		this.init();
+		this.frame();
+		this.project();
 	}
 
-	prepare_frame() {
+	init() {
+	}
+
+	frame() {
 		this.sprite.frame = this.sheet.get(this.sprite.state);
 	}
 
-	prepare_pos() {
+	project() {
 		this.pos2d = this.render.pos2d(this.pos, this.sprite.z_offset);
 	}
 
 	draw() {
-		this.render.blit(this.pos2d, this.sprite.frame);
+		this.render.blit(this.pos2d, this.sprite.frame, this);
 	}
 }
 
@@ -42,7 +47,7 @@ export class Animated extends Entity {
 		// loop animation
 		
 		if(this.sheet.animate(this.sprite.state)) {
-			this.prepare_frame();
+			this.frame();
 		}
 	}
 
@@ -51,16 +56,38 @@ export class Animated extends Entity {
 export class Site extends Animated {
 
 	click() {
-		// TODO build tower
+		this.game.add(new Tower(this.game,this.pos,"tower1",
+			{shot:{damage:1, speed: 1, shape: "mob1"}}));
 	}
 }
 
-export class Mob extends Animated {
-	
-	constructor(pos : Vector, shape : string, game : Game, info : Object) {
-		let instructions = game.grid.path.slice().map(v => Vector.copy(v));
 
-		super(instructions.shift(), shape, game, info);
+export class Mobile extends Animated {
+
+	init() {
+		this.vel = this.info.vel;
+	}
+
+	move() {
+		this.pos = this.pos.add(this.vel)
+	}
+
+	tick() {
+		super.tick();
+		if(!this.grid.move(this, this.move.bind(this))) {
+			this.game.delete(this);
+		}
+		this.project();
+	}
+}
+
+
+export class Mob extends Mobile {
+	
+	constructor(game : Game, pos : Vector, shape : string, info : Object) {
+		let instructions = game.grid.path.slice().map(v => v.copy());
+
+		super(game, instructions.shift(), shape, info);
 
 		this.speed = info.speed;
 		this.path_instructions = instructions;
@@ -70,7 +97,7 @@ export class Mob extends Animated {
 		Mob.count ++;
 	}
 
-	move(amount) {
+	walk(amount) {
 		if(this.completed_path === true || this.current_instruction == undefined) {
 			this.game.lives --;
 			return this.remove();
@@ -108,49 +135,67 @@ export class Mob extends Animated {
 		Mob.count --;
 	}
 
-	tick() {
+	move() {
 		// move through the path
-		super.tick();
 		let delta = (this.game.time.virtual - this.timestamp) / 1000;
 		this.timestamp = this.game.time.virtual;
-		this.move(delta);
-		this.prepare_frame();
-		this.prepare_pos();
+		this.walk(delta);
 	}
 }
 
 export class Tower extends Animated {
 
-	constructor(pos : Vector, shape : string, game : Game, info : Object) {
-		super(pos, shape, game, info);
+	constructor(game : Game, pos : Vector, shape : string, info : Object) {
+		super(game, pos, shape, info);
 		this.rank = 0;
+		this.forward = new Vector(1,0,0.2);
+		this.target = null;
 	}
 
 	click() {
 		// TODO upgrade tower
+		this.game.delete(this);
 	}
 
 	tick() {
 		// point and shoot mobs on range
-		//super.tick();
-		this.prepare_frame();
-		this.game.add(new Shot(this.pos,this.info));
-		return res;
+		super.tick();
+		this.frame();
+
+		if(Math.random()<0.05) {
+			this.game.add(new Shot(
+				this.game,
+				this.pos,
+				this.info.shot.shape || this.sprite.state.shape+"_shot",
+				{
+					damage: this.info.shot.damage || 1,
+					vel: this.forward.scale(this.info.shot.speed || 1)
+				}
+			));
+		}
 	}
 
 	draw() {
 		super.draw();
 		if(this.rank > 0) {
-			this.render.blit(this.pos2d, {shape: "rank"+this.rank});
+			this.render.blit(this.pos2d, {shape: "rank"+this.rank}, this);
 		}
 	}
 }
 
-export class Shot extends Animated {
-	
-	tick() {
+export class Shot extends Mobile {
+
+	move() {
 		// balistic movement and collision check
+		this.vel = this.vel.scale(0.999);
+		super.move();
+	}
+
+	tick() {
 		super.tick();
+
+		if(Math.random() < 0.01) 
+			this.game.delete(this);
 	}
 }
 

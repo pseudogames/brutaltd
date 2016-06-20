@@ -63,13 +63,33 @@ export default class Grid {
 		}
 	}
 
-	add(e : Entity) : void {
-		let p : Vector = e.pos.floor();
+	add(e : Entity, p : Vector = e.pos.floor()) : void {
 		this.cell[p.z][p.y][p.x].add(e);
 	}
 
-	delete(e : Entity) : void {
-		let p : Vector = e.pos.floor();
+	move(e : Entity, fn : Function) : boolean {
+		let p0 = e.pos.floor();
+		fn();
+		let p1 = e.pos.floor();
+		
+		if(!p0.equals(p1)) {
+			if(p1.x < 0 ||
+			   p1.y < 0 ||
+			   p1.z < 0 || 
+			   p1.x >= this.size.x ||
+			   p1.y >= this.size.y ||
+			   p1.z >= this.size.z) {
+				e.pos = p0; // FIXME hack to avoid out of bounds
+				return false;
+			}
+			this.delete(e, p0);
+			this.add(e, p1);
+		}
+		return true;
+	}
+
+
+	delete(e : Entity, p : Vector = e.pos.floor()) : void {
 		this.cell[p.z][p.y][p.x].delete(e);
 	}
 

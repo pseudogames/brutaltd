@@ -68,7 +68,7 @@ export default class Game {
 		}
 
 		info = info ? JSON.parse(info.replace(/'/g,'"')) : {};
-		return new Type(pos, shape, this, info);
+		return new Type(this, pos, shape, info);
 	}
 
 	start(tier : number) {
@@ -151,7 +151,7 @@ export default class Game {
 
 		let hh = ""+Math.floor(this.time.analog);
 		let mm = ""+(Math.floor(this.time.analog * 60) % 60);
-		this.time.digital = hh+":"+(mm.length == 1 ? "0" : "")+mm;
+		this.time.digital = hh+":"+("0"+mm).slice(-2);
 		document.getElementById("clock").innerText = this.time.digital + 
 				(this.wave.length == 0 ? "" :
 					" (" + this.wave[0].schedule + "h " + 

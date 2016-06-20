@@ -18,6 +18,11 @@
 			"cycle": [6, "idle"],
 			"shape": [0.9, "mob1"]
 		},
+		"tower": {
+			"pos": [0,2],
+			"cycle": [6, "idle"],
+			"shape": [0.8, "tower1"]
+		},
 		"fluid": {
 			"pos": [3,0],
 			"cycle": [3, "idle"],
