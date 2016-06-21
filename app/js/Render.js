@@ -4,7 +4,7 @@ import Tween from "./Tween";
 import Grid from "./Grid";
 import {Sheet,Frame} from "./Sprite";
 import SortedSet from "./SortedSet";
-import {Entity} from "./Entity";
+import {Entity} from "./entity/Entity";
 
 export default class Render {
 

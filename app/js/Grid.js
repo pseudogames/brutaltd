@@ -1,6 +1,6 @@
 import Vector from "./Vector";
 import Loader from "./Loader";
-import {Entity} from "./Entity";
+import {Entity} from "./entity/Entity";
 
 // Space subdivision, collision
 

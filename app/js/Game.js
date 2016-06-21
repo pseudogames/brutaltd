@@ -3,8 +3,7 @@ import Loader  from "./Loader";
 import Grid    from "./Grid";
 import {Sheet} from "./Sprite";
 import Render  from "./Render";
-import * as Entity  from "./Entity";
-
+import * as Entity  from "./entity/EntityLoader";
 
 // Logic to send waves
 
@@ -63,6 +62,7 @@ export default class Game {
 		if(!Type) {
 			throw `type '${type}' does not exist, review 'grid/${this.tier.grid}.json' file`;
 		}
+
 		if(Type.prototype instanceof Entity.Animated && !this.sheet.is_animated(shape)) {
 			throw `type '${type}' is animated but shape '${shape}' is not check 'grid/${this.tier.grid}.json' file`;
 		}
