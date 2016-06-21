@@ -141,7 +141,8 @@ export default class Game {
 		let real = time - this.time.start;
 		let delta = real - this.time.real;
 		this.time.real = real;
-		this.time.virtual += delta * this.time.speed;
+		this.time.delta =  delta * this.time.speed;
+		this.time.virtual += this.time.delta;
 
 		if(!this.running)
 			return;
@@ -175,7 +176,7 @@ export default class Game {
 		let wave = this.wave[0];
 		if(wave.time < this.time.analog) {
 			if(wave.quantity --> 0) {
-				this.add( this.deserialize(this.grid.path[0], wave.entity) );
+				this.add( this.deserialize(this.grid.path[0], this.info.mobs[wave.entity]) );
 				wave.time += this.delay_between_mobs;
 			} else {
 				this.wave.shift();

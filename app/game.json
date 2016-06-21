@@ -1,15 +1,28 @@
 {
+	"towers": {
+		"basic": "mob1 : Tower()"
+	},
+	"mobs": {
+		"mob1a": "mob1 : Mob({'speed':1})",
+		"mob1b": "mob1 : Mob({'speed':2})",
+		"mob1c": "mob1 : Mob({'speed':3})",
+		"mob1d": "mob1 : Mob({'speed':4})",
+		"mob1e": "mob1 : Mob({'speed':5})",
+		"mob2a": "mob1 : Mob({'speed':6})",
+		"mob2b": "mob1 : Mob({'speed':7})"
+	},
 	"tier": [
 		{
 			"sheet": "pixel1",
 			"grid": "test",
 			"lives": 10,
+			"towers": ["basic"],
 			"wave": [
-				[ 5,  "mob1 : Mob({'speed':1})", 10, "standup"],
-				[10,  "mob1 : Mob({'speed':2})", 13, "planning"],
-				[15,  "mob1 : Mob({'speed':3})", 14, "review"],
-				[ 5,  "mob1 : Mob({'speed':4})", 16, "retrospective"],
-				[10,  "mob1 : Mob({'speed':5})", 18, "replanning"]
+				[ 5,  "mob1a", 10, "standup"],
+				[10,  "mob1b", 13, "planning"],
+				[15,  "mob1c", 14, "review"],
+				[ 5,  "mob1d", 16, "retrospective"],
+				[10,  "mob1e", 18, "replanning"]
 			]
 		},
 		{
@@ -17,13 +30,13 @@
 			"grid": "test_alternative_grid",
 			"lives": 5,
 			"wave": [
-				[10, "mob1", 1, 10, "strategic"],
-				[10, "mob1", 1, 11, "budget"],
-				[10, "mob1", 2, 13, "operational"],
-				[10, "mob2", 2, 14, "taxes"],
-				[15, "mob1", 3, 16, "marketing"],
-				[10, "mob2", 3, 18, "new layout"],
-				[20, "mob1", 4, 22, "postmortem"]
+				[10, "mob1a", 1, 10, "strategic"],
+				[10, "mob1b", 1, 11, "budget"],
+				[10, "mob1c", 2, 13, "operational"],
+				[10, "mob2a", 2, 14, "taxes"],
+				[15, "mob1d", 3, 16, "marketing"],
+				[10, "mob2b", 3, 18, "new layout"],
+				[20, "mob1e", 4, 22, "postmortem"]
 			]
 		}
 	]

@@ -45,7 +45,6 @@ export class Animated extends Entity {
 
 	tick() {
 		// loop animation
-		
 		if(this.sheet.animate(this.sprite.state, this.info.speed || 1)) {
 			this.frame();
 		}
@@ -66,13 +65,10 @@ export class Mobile extends Animated {
 
 	init() {
 		this.vel = this.info.vel;
-		this.moved_at = this.game.time.virtual;
 	}
 
 	move() {
-		let delta = this.game.time.virtual - this.moved_at;
-		this.moved_at = this.game.time.virtual;
-		this.pos = this.pos.add(this.vel.scale(delta/1000));
+		this.pos = this.pos.add(this.vel.scale(this.game.time.delta / 1000)); // 1Hz
 	}
 
 	tick() {
@@ -100,7 +96,9 @@ export class Mob extends Mobile {
 		Mob.count ++;
 	}
 
-	walk(amount) {
+	move() {
+		// move through the path
+
 		if(this.completed_path === true || this.current_instruction == undefined) {
 			this.game.lives --;
 			return this.remove();
@@ -108,7 +106,7 @@ export class Mob extends Mobile {
 
 		let {x : nx, y : ny} = this.current_instruction;
 		let {x,y}        = this.pos;
-		let moved_amount = this.speed * amount;
+		let moved_amount = this.speed * this.game.time.delta / 1000;
 
 		this.pos.x = this.limit(this.direction.x, moved_amount, x, nx);
 		this.pos.y = this.limit(this.direction.y, moved_amount, y, ny);
@@ -138,12 +136,6 @@ export class Mob extends Mobile {
 		Mob.count --;
 	}
 
-	move() {
-		// move through the path
-		let delta = (this.game.time.virtual - this.moved_at) / 1000;
-		this.moved_at = this.game.time.virtual;
-		this.walk(delta);
-	}
 }
 
 export class Tower extends Animated {
