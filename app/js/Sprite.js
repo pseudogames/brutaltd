@@ -50,13 +50,15 @@ export class Sheet {
 						elevation = e;
 						continue;
 					}
-					this.elevation[e] = elevation;
-					this.still[e] = {
-						x: this.size.x * x,
-						y: this.size.y * y,
-						w: this.size.x,
-						h: this.size.y
-					};
+					if(e !== null) {
+						this.elevation[e] = elevation;
+						this.still[e] = {
+							x: this.size.x * x,
+							y: this.size.y * y,
+							w: this.size.x,
+							h: this.size.y
+						};
+					}
 					x++;
 				}
 				y++;

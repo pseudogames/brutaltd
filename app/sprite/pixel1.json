@@ -35,6 +35,13 @@
 			"shape": [
 				[0.4, "wall", 0.3, "floor","table"]
 			]
+		},
+		"icon": {
+			"pos": [0,1],
+			"shape": [
+				[null,null,"mob1"],
+				[null,null,"tower1"]
+			]
 		}
 	}
 }

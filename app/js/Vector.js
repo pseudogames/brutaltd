@@ -34,6 +34,14 @@ export default class Vector {
 		);
 	}
 
+	circle_ground(angle : number, radius : number) {
+		return new Vector(
+			this.x - Math.cos(angle) * radius,
+			this.y + Math.sin(angle) * radius,
+			this.z
+		)
+	}
+
 	floor() : Vector {
 		return new Vector(
 			Math.floor(this.x),

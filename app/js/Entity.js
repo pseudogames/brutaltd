@@ -27,13 +27,12 @@ export class Entity {
 
 	focus() {
 		this.highlight = true;
-		this.game.selected.add(this);
-		console.log("focus",this);
+		this.game.highlight.add(this);
 	}
 
 	blur() {
 		this.highlight = false;
-		this.game.selected.delete(this);
+		this.game.highlight.delete(this);
 	}
 
 	frame() {
@@ -47,6 +46,28 @@ export class Entity {
 	draw() {
 		this.render.blit(this);
 	}
+
+	selector(origin : Vector, option : Array) {
+		let step = Math.PI * 2 / option.length;
+		let angle = 0;
+
+		this.game.selector.forEach(e => this.game.delete(e));
+		option.forEach(opt => {
+			let action = new Action(
+				this.game,
+				origin.circle_ground(angle, 1.2),
+				opt.shape,
+				{
+					label: opt.label,
+					callback: opt.action,
+				}
+			);
+			this.game.add(action);
+			this.game.selector.add(action);
+			angle += step;
+		});
+	}
+
 }
 
 export class Still extends Entity {
@@ -64,11 +85,43 @@ export class Animated extends Entity {
 
 }
 
+export class Action extends Still {
+	
+	project() {
+		super.project();
+		this.pos2d.z += 9999;
+	}
+
+	click() {
+		this.info.callback();
+		this.game.selector.forEach(e => this.game.delete(e));
+	}
+
+	draw() {
+		super.draw();
+		this.render.text(this.pos2d, this.info.label);
+	}
+}
+
 export class Site extends Animated {
 
 	click() {
-		this.game.add(new Tower(this.game,this.pos,"tower1",
-			{shot:{damage:1, speed: 1, shape: "mob1"}}));
+
+		this.selector(
+			this.pos.copy(),
+			this.game.tier.towers.map(id => {
+				let p = this.game.parse(this.game.info.towers[id]);
+				return {
+					label: `${id} ($${p.info.$})`,
+					shape: p.shape,
+					action: () => {
+						this.game.resources -= p.info.price;
+						this.game.add(new p.Type(this.game,this.pos,p.shape,p.info)); // TODO Entity.load()
+					}
+				}
+			})
+		);
+
 	}
 
 }

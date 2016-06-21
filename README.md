@@ -10,15 +10,12 @@
 
 ## TODO
 
-### RENDER
-
-* popup with actions doable on clicked tile
-
 ### GRID
 
 * grid collision (using elevation)
 * improve grid / entity move API
 * do the same grid API improvements on Entity.frame
+* allow entities to move beyond grid, but dont add on cell
 
 ### ENTITY
 

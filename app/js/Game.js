@@ -47,36 +47,52 @@ export default class Game {
 		if(e.tick) this.entity.delete(e);
 		this.render.delete(e);
 		this.grid.delete(e);
+		this.selector.delete(e);
+		this.highlight.delete(e);
 	}
 
-	deserialize(pos : Vector, serialized : string) : Entity.Entity {
-		let [,shape,,type,info] = serialized.match(/^(\w+)(\s*:\s*(\w+)\(((.*))?\))?/)
+	parse(serialized : string) : Object {
+		let [,shape,,typename,info] = serialized.match(/^(\w+)(\s*:\s*(\w+)\(((.*))?\))?/)
 		// for instance, "larry : Mob({health:10,speed:20})"
 
 		if(!shape) {
 			throw "bad entity definition '"+serialized+"'";
 		}
 
-		let Type = type ? Entity[type] :
+		let Type = typename ? Entity[typename] :
 			this.sheet.is_animated(shape) ? Entity.Animated : Entity.Still;
 
 		if(!Type) {
-			throw `type '${type}' does not exist, review 'grid/${this.tier.grid}.json' file`;
+			throw `type '${typename}' does not exist, review 'grid/${this.tier.grid}.json' file`;
 		}
 		if(Type.prototype instanceof Entity.Animated && !this.sheet.is_animated(shape)) {
-			throw `type '${type}' is animated but shape '${shape}' is not check 'grid/${this.tier.grid}.json' file`;
+			throw `type '${typename}' is animated but shape '${shape}' is not check 'grid/${this.tier.grid}.json' file`;
 		}
 
 		info = info ? JSON.parse(info.replace(/'/g,'"')) : {};
-		return new Type(this, pos, shape, info);
+
+		return {
+			shape: shape,
+			typename: typename,
+			Type: Type,
+			info: info
+		};
+	}
+
+	deserialize(pos : Vector, serialized : string) : Entity.Entity {
+		let p = this.parse(serialized);
+
+		return new p.Type(this, pos, p.shape, p.info);
 	}
 
 	start(tier : number) {
 		this.stop();
 
-		this.selected = new Set();
+		this.selector = new Set();
+		this.highlight = new Set();
 		this.entity = new Set();
 		this.tier  = this.info.tier[tier];
+		this.resources = 10;
 
 		if(!this.tier) {
 			throw "tier "+this.tier+" not found";
@@ -137,8 +153,8 @@ export default class Game {
 	}
 
 	click(ev : Event) {
-		if(this.selected.size > 0) {
-			this.selected.forEach(e => e.blur());
+		if(this.highlight.size > 0) {
+			this.highlight.forEach(e => e.blur());
 		}
 
 		let e = this.render.click(ev);
@@ -153,6 +169,8 @@ export default class Game {
 			Array.from(this.grid.get(e.pos))
 				.filter( e => e.click )
 				.forEach(e => e.focus());
+		} else {
+			this.selector.forEach(e => this.delete(e));
 		}
 	}
 
