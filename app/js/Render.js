@@ -9,7 +9,7 @@ import {Entity} from "./entity/Entity";
 export default class Render {
 
 	constructor() {
-		// this.debug = true;
+		//this.debug = true;
 		this.fps = 30;
 		this.screen_canvas = document.createElement("canvas");
 		this.screen_ctx = this.screen_canvas.getContext("2d");
@@ -35,18 +35,9 @@ export default class Render {
 		this.entity    = new SortedSet((a,b) => a.pos2d.z - b.pos2d.z);
 		this.clickable = new SortedSet((a,b) => a.pos2d.z - b.pos2d.z);
 
-		this.resize(); // draw, request animation frame cycle
+		this.resize(); // draw
 
-		this.resizer = _ => this.resize();
-		this.zoomer = e => e.button == 1 && this.zoom();
-		this.scroller = e => this.scroll(e.deltaY);
-		this.clicker = e => this.click(e);
-
-		window.addEventListener('resize', this.resizer);
-		this.canvas.addEventListener('click', this.zoomer);
-		this.canvas.addEventListener('click', this.clicker);
-		this.canvas.addEventListener('wheel', this.scroller);
-		// this.raf = requestAnimationFrame( this.draw.bind(this) );
+		window.addEventListener('resize', this.resize.bind(this));
 
 		this.timestamp = 0;
 		this.delay = 1000 / this.fps;
@@ -57,15 +48,8 @@ export default class Render {
 	cleanup() {
 		delete this.entity;
 		delete this.clickable;
-		// if(this.raf) {
-		// 	cancelAnimationFrame(this.raf);
-		// 	delete this.raf;
-		// }
 		this.scaler.cleanup();
-		window.removeEventListener('resize', this.resizer);
-		this.canvas.removeEventListener('click', this.zoomer);
-		this.canvas.removeEventListener('click', this.clicker);
-		this.canvas.removeEventListener('wheel', this.scroller);
+		window.removeEventListener('resize', this.resize.bind(this));
 	}
 
 	resize() {
@@ -136,8 +120,8 @@ export default class Render {
 		this.project();
 	}
 
-	pos2d(pos3d : Vector, z_offset : number) : Vector {
-		return this.projection.project(pos3d, z_offset)
+	pos2d(pos3d : Vector, elevation : number) : Vector {
+		return this.projection.project(pos3d, elevation)
 			.add(this.origin)
 			.scale(this.scale)
 			.add(this.scroll_abs.scale(this.scroll_rel));
@@ -164,16 +148,17 @@ export default class Render {
 		}
 	}
 
-	blit_tinted(pos2d : Vector, frame : Object, e : Entity) : void {
-		if(this.tint_index >= Render.palette.length) {
-			throw "not enough color ids for that many clickable entities";
-		}
-		let color = Render.palette[this.tint_index++];
+	// TODO: declare frame as type Frame
+	// for some reason this is not working now
+	blit_clickable(e : Entity, frame : Object = e.sprite.frame) : void {
+		// XXX clickable elements cannot have alpha gradients
+
+		let color = "#"+("00000"+(this.tint_color+=4).toString(16)).slice(-6);
 		this.tint_ctx.fillStyle = color;
 		this.tint_ctx.globalCompositeOperation = "source-over";
-		this.tint_ctx.fillRect(0,0,this.size2d.x, this.size2d.y);
+		this.tint_ctx.fillRect(0,0, this.size2d.x, this.size2d.y);
 		this.tint_ctx.globalCompositeOperation = "destination-atop";
-		this.click_map[color] = e;
+		this.click_entity[color] = e;
 
 		let {image, geometry:{x,y,w,h}} = frame;
 
@@ -184,39 +169,54 @@ export default class Render {
 			this.size2d.y
 		);
 		
+		this.click_ctx.globalCompositeOperation = "source-over";
 		this.click_ctx.drawImage(
 			this.tint_canvas,
-			pos2d.x,
-			pos2d.y
+			e.pos2d.x,
+			e.pos2d.y
 		);
 
 	}
 
-	blit_normal(pos2d : Vector, frame : Object, e : Entity) : void {
+	// TODO: declare frame as type Frame
+	// for some reason this is not working now
+	blit_normal(e : Entity, frame : Object = e.sprite.frame) : void {
+
 		let {image, geometry:{x,y,w,h}} = frame;
+
+		this.screen_ctx.globalCompositeOperation = "source-over";
 		this.screen_ctx.drawImage(
 			image, x,y,w,h,
-			pos2d.x,
-			pos2d.y,
+			e.pos2d.x,
+			e.pos2d.y,
 			this.size2d.x,
 			this.size2d.y
 		);
+
+		if(e.highlight) {
+			this.screen_ctx.globalCompositeOperation = "lighter";
+			this.screen_ctx.drawImage(
+				image, x,y,w,h,
+				e.pos2d.x,
+				e.pos2d.y,
+				this.size2d.x,
+				this.size2d.y
+			);
+		}
 	}
 
 	click(ev : ?Event) {
 		this.click_ctx.clearRect(0, 0, this.viewport.x, this.viewport.y);
 
-		this.click_map = {};
-		this.tint_index = 0;
-		this.blit = this.blit_tinted;
+		this.click_entity = {};
+		this.tint_color = 1;
+		this.blit = this.blit_clickable;
 		this.clickable.forEach(e => e.draw());
 
 		if(!ev || ev.button != 0) return;
 		let p = this.click_ctx.getImageData(ev.x, ev.y, 1, 1).data; 
-		let c = "#"+Array.prototype.slice.call(p,0,3).map(a => ("0"+(a).toString(16)).slice(-2)).join("").toUpperCase();
-		let e = this.click_map[c];
-		if(this.debug) console.log(e.x,e.y,c,e);
-		if(e) e.click();
+		let c = "#"+Array.prototype.slice.call(p,0,3).map(a => ("0"+(a).toString(16)).slice(-2)).join("");
+		return this.click_entity[c];
 	}
 
 	draw() {

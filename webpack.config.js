@@ -7,12 +7,8 @@ module.exports = {
 		'./app/js/main'
 	],
 	output: {
-
 		path: path.join(__dirname, 'build/js'),
 		filename: 'bundle.js'
-	},
-	devServer: {
-		contentBase: "./build"
 	},
 	devtool: 'source-map',
 	module: {
@@ -34,5 +30,6 @@ module.exports = {
 			}
 		]
 	},
+	cache: true,
 	debug: true
 };

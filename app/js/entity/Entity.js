@@ -10,9 +10,10 @@ export class Entity {
 		this.grid = game.grid;
 		this.sheet = game.sheet;
 		this.render = game.render;
+		this.highlight = false;
 		this.sprite = {
 			state: this.sheet.initial_state(shape),
-			z_offset: this.sheet.get_z(shape)
+			elevation: this.sheet.get_elevation(shape)
 		};
 		this.init();
 		this.frame();
@@ -22,15 +23,26 @@ export class Entity {
 	init() {
 	}
 
+	focus() {
+		this.highlight = true;
+		this.game.selected.add(this);
+		console.log("focus",this);
+	}
+
+	blur() {
+		this.highlight = false;
+		this.game.selected.delete(this);
+	}
+
 	frame() {
 		this.sprite.frame = this.sheet.get(this.sprite.state);
 	}
 
 	project() {
-		this.pos2d = this.render.pos2d(this.pos, this.sprite.z_offset);
+		this.pos2d = this.render.pos2d(this.pos, this.sprite.elevation);
 	}
 
 	draw() {
-		this.render.blit(this.pos2d, this.sprite.frame, this);
+		this.render.blit(this);
 	}
 }

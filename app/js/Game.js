@@ -74,6 +74,7 @@ export default class Game {
 	start(tier : number) {
 		this.stop();
 
+		this.selected = new Set();
 		this.entity = new Set();
 		this.tier  = this.info.tier[tier];
 
@@ -108,6 +109,7 @@ export default class Game {
 				this.time.animation = 0;
 				this.time.skip = 0;
 				this.time.open = this.wave[0].schedule - 1;
+				this.delay_between_mobs = 1/60; // hours on analog clock
 
 				this.render.setup(g,s);
 				this.sheet.setup(this.time);
@@ -128,8 +130,29 @@ export default class Game {
 		this.stop();
 		this.time.speed = s;
 		let d = Math.floor(this.sheet.delay / s);
+
 		if(d > 0) {
 			this.time.interval = setInterval(this.tick.bind(this), d);
+		}
+	}
+
+	click(ev : Event) {
+		if(this.selected.size > 0) {
+			this.selected.forEach(e => e.blur());
+		}
+
+		let e = this.render.click(ev);
+		if(e) {
+			// click the top of the stack
+			Array.from(this.grid.get(e.pos))
+				.filter( e => e.click )
+				.sort((a,b) => b.sprite.elevation - a.sprite.elevation)
+				[0].click();
+			
+			// highlight the whole NEW stack
+			Array.from(this.grid.get(e.pos))
+				.filter( e => e.click )
+				.forEach(e => e.focus());
 		}
 	}
 
@@ -139,13 +162,16 @@ export default class Game {
 		let real = time - this.time.start;
 		let delta = real - this.time.real;
 		this.time.real = real;
-		this.time.virtual += delta * this.time.speed;
+		this.time.delta =  delta * this.time.speed;
+		this.time.virtual += this.time.delta;
 
 		if(!this.running)
 			return;
 
 		if(next && this.wave.length > 0) {
-			this.time.skip += this.wave[0].time - this.time.analog;
+			let s = this.wave[0].time - this.time.analog;
+			if(s > this.delay_between_mobs)
+				this.time.skip += s;
 		}
 		this.time.analog = this.time.virtual / analog_to_virtual + this.time.open + this.time.skip;
 
@@ -171,8 +197,8 @@ export default class Game {
 		let wave = this.wave[0];
 		if(wave.time < this.time.analog) {
 			if(wave.quantity --> 0) {
-				this.add( this.deserialize(this.grid.path[0], wave.entity) );
-				wave.time += 1/60;
+				this.add( this.deserialize(this.grid.path[0], this.info.mobs[wave.entity]) );
+				wave.time += this.delay_between_mobs;
 			} else {
 				this.wave.shift();
 			}
