@@ -10,20 +10,13 @@
 
 ## TODO
 
-### GAME
-
-* setInterval delay must be as fast as the fastest entity's speed (check on add?)
-
 ### RENDER
 
-* Render.click ativa a entidade de maior z_offset
-* highlight selected clickable tile
 * popup with actions doable on clicked tile
-* sequencial color-ids on click, instead of a palette
 
 ### GRID
 
-* grid collision (using z_offset)
+* grid collision (using elevation)
 * improve grid / entity move API
 * do the same grid API improvements on Entity.frame
 

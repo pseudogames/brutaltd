@@ -74,6 +74,7 @@ export default class Game {
 	start(tier : number) {
 		this.stop();
 
+		this.selected = new Set();
 		this.entity = new Set();
 		this.tier  = this.info.tier[tier];
 
@@ -132,6 +133,26 @@ export default class Game {
 
 		if(d > 0) {
 			this.time.interval = setInterval(this.tick.bind(this), d);
+		}
+	}
+
+	click(ev : Event) {
+		if(this.selected.size > 0) {
+			this.selected.forEach(e => e.blur());
+		}
+
+		let e = this.render.click(ev);
+		if(e) {
+			// click the top of the stack
+			Array.from(this.grid.get(e.pos))
+				.filter( e => e.click )
+				.sort((a,b) => b.sprite.elevation - a.sprite.elevation)
+				[0].click();
+			
+			// highlight the whole NEW stack
+			Array.from(this.grid.get(e.pos))
+				.filter( e => e.click )
+				.forEach(e => e.focus());
 		}
 	}
 

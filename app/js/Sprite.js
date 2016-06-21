@@ -42,15 +42,15 @@ export class Sheet {
 		for(let g in this.info.still) {
 			let [x0,y] = this.info.still[g].pos;
 			for(let i in this.info.still[g].shape) {
-				let z_offset = 0;
+				let elevation = 0;
 				let x = x0;
 				for(let j in this.info.still[g].shape[i]) {
 					let e = this.info.still[g].shape[i][j];
 					if(typeof(e) == "number") {
-						z_offset = e;
+						elevation = e;
 						continue;
 					}
-					this.z_offset[e] = z_offset;
+					this.elevation[e] = elevation;
 					this.still[e] = {
 						x: this.size.x * x,
 						y: this.size.y * y,
@@ -68,14 +68,14 @@ export class Sheet {
 		this.animated = {};
 		for(let g in this.info.animated) {
 			let [x0,y] = this.info.animated[g].pos;
-			let z_offset = 0;
+			let elevation = 0;
 			for(let i in this.info.animated[g].shape) {
 				let e = this.info.animated[g].shape[i];
 				if(typeof(e) == "number") {
-					z_offset = e;
+					elevation = e;
 					continue;
 				}
-				this.z_offset[e] = z_offset;
+				this.elevation[e] = elevation;
 				this.animated[e] = {};
 				let frames_per_state = 1;
 				let x = x0;
@@ -114,7 +114,7 @@ export class Sheet {
 			new Vector(...info.projection[1]),
 			new Vector(...info.projection[2])
 		);
-		this.z_offset = {};
+		this.elevation = {};
 		this.build_index_still(info);
 		this.build_index_animated(info);
 		this.delay = 1000 / this.info.fps;
@@ -135,8 +135,8 @@ export class Sheet {
 		throw `no sprite for shape '${shape}'`;
 	}
 
-	get_z(shape : string) : number {
-		return this.z_offset[shape];
+	get_elevation(shape : string) : number {
+		return this.elevation[shape];
 	}
 
 	initial_state(shape : string, cycle : string = "idle") : State {

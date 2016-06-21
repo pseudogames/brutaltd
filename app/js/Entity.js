@@ -12,9 +12,10 @@ export class Entity {
 		this.grid = game.grid;
 		this.sheet = game.sheet;
 		this.render = game.render;
+		this.highlight = false;
 		this.sprite = {
 			state: this.sheet.initial_state(shape),
-			z_offset: this.sheet.get_z(shape)
+			elevation: this.sheet.get_elevation(shape)
 		};
 		this.init();
 		this.frame();
@@ -24,16 +25,27 @@ export class Entity {
 	init() {
 	}
 
+	focus() {
+		this.highlight = true;
+		this.game.selected.add(this);
+		console.log("focus",this);
+	}
+
+	blur() {
+		this.highlight = false;
+		this.game.selected.delete(this);
+	}
+
 	frame() {
 		this.sprite.frame = this.sheet.get(this.sprite.state);
 	}
 
 	project() {
-		this.pos2d = this.render.pos2d(this.pos, this.sprite.z_offset);
+		this.pos2d = this.render.pos2d(this.pos, this.sprite.elevation);
 	}
 
 	draw() {
-		this.render.blit(this.pos2d, this.sprite.frame, this);
+		this.render.blit(this);
 	}
 }
 
@@ -58,6 +70,7 @@ export class Site extends Animated {
 		this.game.add(new Tower(this.game,this.pos,"tower1",
 			{shot:{damage:1, speed: 1, shape: "mob1"}}));
 	}
+
 }
 
 
@@ -68,7 +81,7 @@ export class Mobile extends Animated {
 	}
 
 	move() {
-		this.pos = this.pos.add(this.vel.scale(this.game.time.delta / 1000)); // 1Hz
+		this.pos = this.pos.add(this.vel.scale(this.game.time.delta / 1000));
 	}
 
 	tick() {
@@ -175,7 +188,7 @@ export class Tower extends Animated {
 	draw() {
 		super.draw();
 		if(this.rank > 0) {
-			this.render.blit(this.pos2d, {shape: "rank"+this.rank}, this);
+			this.render.blit(this, {shape: "rank"+this.rank});
 		}
 	}
 }
