@@ -1,7 +1,10 @@
 {
 	"towers": {
 		"basic": "mob1 : Tower({'price':5,'shot':{'dmg':1,'shape':'mob1'}})",
-		"vet": "tower1 : Tower({'price':20,'shot':{'dmg':4,'shape':'mob1'}})"
+		"vet": "tower1 : Tower({'price':20,'shot':{'dmg':4,'shape':'mob1'}})",
+		"kickass": "tower1 : Tower({'price':60,'shot':{'dmg':4,'shape':'mob1'}})",
+		"ultraman": "tower1 : Tower({'price':1999,'shot':{'dmg':4,'shape':'mob1'}})",
+		"superman": "tower1 : Tower({'price':20000,'shot':{'dmg':4,'shape':'mob1'}})"
 	},
 	"mobs": {
 		"mob1a": "mob1 : Mob({'speed':1})",
@@ -17,7 +20,7 @@
 			"sheet": "pixel1",
 			"grid": "test",
 			"lives": 10,
-			"towers": ["basic","vet"],
+			"towers": ["basic","vet","kickass","ultraman","superman"],
 			"wave": [
 				[ 5,  "mob1a", 10, "standup"],
 				[10,  "mob1b", 13, "planning"],

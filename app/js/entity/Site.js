@@ -11,7 +11,7 @@ export default class Site extends Animated {
 				let serialized = this.game.info.towers[id];
 				let {shape,info} = Entity.parse(this.sheet, serialized);
 				return {
-					label: `${id} ($${info.price})`,
+					label: `${id} $${info.price}`,
 					shape: shape,
 					action: () => {
 						this.game.resources -= info.price;

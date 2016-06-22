@@ -112,9 +112,10 @@ export default class Entity {
 		option.forEach(opt => {
 			let action = new Entity.registry.Action(
 				this.game,
-				origin.circle_ground(angle, 1.2),
+				origin.circle_ground(angle, 1.25),
 				opt.shape,
 				{
+					origin : origin,
 					label: opt.label,
 					callback: opt.action,
 				}

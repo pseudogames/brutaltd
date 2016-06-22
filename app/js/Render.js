@@ -213,10 +213,16 @@ export default class Render {
 	}
 
 	text(pos2d: Vector, text : string) : void {
+		this.screen_ctx.save();
 		this.screen_ctx.fillStyle="#ffffff";
 		this.screen_ctx.font="10px Arial";
 		this.screen_ctx.textAlign="center";
-		this.screen_ctx.fillText(text,pos2d.x,pos2d.y);
+		this.screen_ctx.shadowColor = "black";
+		this.screen_ctx.shadowOffsetX = 1; 
+		this.screen_ctx.shadowOffsetY = 1; 
+		this.screen_ctx.shadowBlur = 3;
+		this.screen_ctx.fillText(text, pos2d.x, pos2d.y);
+		this.screen_ctx.restore();
 	}
 
 	draw() {
