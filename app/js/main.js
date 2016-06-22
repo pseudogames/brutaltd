@@ -1,5 +1,15 @@
 'use strict';
 
+import Entity   from "./Entity";
+import Still    from "./entity/Still";
+import Animated from "./entity/Animated";
+import Site     from "./entity/Site";
+import Action   from "./entity/Action";
+import Mob      from "./entity/Mob";
+import Tower    from "./entity/Tower";
+import Shot     from "./entity/Shot";
+import Clock    from "./entity/Clock";
+
 import Game from "./Game";
 
 let game = new Game();

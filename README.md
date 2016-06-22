@@ -17,12 +17,3 @@
 * do the same grid API improvements on Entity.frame
 * allow entities to move beyond grid, but dont add on cell
 
-### ENTITY
-
-* move entities to separate files
-* register inherited entities on base Entity
-* move Game.deserializer to Entity.load
-* move Game.add code to Entity.constructor
-* move Game.delete to Entity.delete
-* make Entity account subclasses (e.g., Mob.count++)
-

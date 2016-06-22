@@ -1,10 +1,53 @@
 import Vector from "./Vector";
-import {Sheet,Frame,State} from "./Sprite";
-import Render from "./Render";
 import Game   from "./Game";
+import Render from "./Render";
+import {Sheet,Frame,State} from "./Sprite";
 
-export class Entity {
-		
+export default class Entity {
+
+	static parse(sheet : Sheet, serialized : string) : Object {
+		let [,shape,,typename,info] = serialized.match(/^(\w+)(\s*:\s*(\w+)\(((.*))?\))?/)
+		// for instance, "larry : Mob({'health':10,'speed':20})"
+
+		if(!shape) {
+			throw "bad entity definition '"+serialized+"'";
+		}
+
+		if(!Entity.registry.Animated || !Entity.registry.Still) {
+			throw "basic entities Still and Animated not loaded";
+		}
+
+		let Type = typename ? Entity.registry[typename] :
+			sheet.is_animated(shape) ?
+				Entity.registry.Animated : 
+				Entity.registry.Still;
+
+		if(!Type) {
+			throw `type '${typename}' does not exist, review 'grid/${this.tier.grid}.json' file`;
+		}
+
+		if(Type.prototype instanceof Entity.registry.Animated &&
+			!sheet.is_animated(shape))
+		{
+			throw `type '${typename}' is animated but shape '${shape}' is not check 'grid/${this.tier.grid}.json' file`;
+		}
+
+		info = info ? JSON.parse(info.replace(/'/g,'"')) : {};
+
+		return {
+			typename: typename,
+			Type: Type,
+			shape: shape,
+			info: info
+		};
+	}
+
+	static load(game : Game, pos : Vector, serialized : string) : Entity {
+		let {Type,shape,info} = this.parse(game.sheet, serialized);
+		return new Type(game, pos, shape, info);
+	}
+
+
 	constructor(game : Game, pos : Vector, shape : string, info : Object) {
 		this.pos = pos;
 		this.info = info;
@@ -20,6 +63,20 @@ export class Entity {
 		this.init();
 		this.frame();
 		this.project();
+
+		// add
+		this.grid.add(this);
+		this.render.add(this);
+		this.game.add(this);
+
+		this.constructor.count ++;
+	}
+
+	delete() : void {
+		this.render.delete(this);
+		this.grid.delete(this);
+		this.game.delete(this);
+		this.constructor.count --;
 	}
 
 	init() {
@@ -51,9 +108,9 @@ export class Entity {
 		let step = Math.PI * 2 / option.length;
 		let angle = 0;
 
-		this.game.selector.forEach(e => this.game.delete(e));
+		this.game.selector.forEach(e => e.delete());
 		option.forEach(opt => {
-			let action = new Action(
+			let action = new Entity.registry.Action(
 				this.game,
 				origin.circle_ground(angle, 1.2),
 				opt.shape,
@@ -68,197 +125,10 @@ export class Entity {
 		});
 	}
 
-}
 
-export class Still extends Entity {
-	
-}
-
-export class Animated extends Entity {
-
-	tick() {
-		// loop animation
-		if(this.sheet.animate(this.sprite.state, this.info.speed || 1)) {
-			this.frame();
-		}
-	}
-
-}
-
-export class Action extends Still {
-	
-	project() {
-		super.project();
-		this.pos2d.z += 9999;
-	}
-
-	click() {
-		this.info.callback();
-		this.game.selector.forEach(e => this.game.delete(e));
-	}
-
-	draw() {
-		super.draw();
-		this.render.text(this.pos2d, this.info.label);
+	static register(Type : Class) : void {
+		Entity.registry[Type.name] = Type;
 	}
 }
 
-export class Site extends Animated {
-
-	click() {
-
-		this.selector(
-			this.pos.copy(),
-			this.game.tier.towers.map(id => {
-				let p = this.game.parse(this.game.info.towers[id]);
-				return {
-					label: `${id} ($${p.info.$})`,
-					shape: p.shape,
-					action: () => {
-						this.game.resources -= p.info.price;
-						this.game.add(new p.Type(this.game,this.pos,p.shape,p.info)); // TODO Entity.load()
-					}
-				}
-			})
-		);
-
-	}
-
-}
-
-
-export class Mobile extends Animated {
-
-	init() {
-		this.vel = this.info.vel;
-	}
-
-	move() {
-		this.pos = this.pos.add(this.vel.scale(this.game.time.delta / 1000));
-	}
-
-	tick() {
-		super.tick();
-		if(!this.grid.move(this, this.move.bind(this))) {
-			this.game.delete(this);
-		}
-		this.project();
-	}
-}
-
-
-export class Mob extends Mobile {
-	
-	constructor(game : Game, pos : Vector, shape : string, info : Object) {
-		let instructions = game.grid.path.slice().map(v => v.copy());
-
-		super(game, instructions.shift(), shape, info);
-
-		this.speed = info.speed;
-		this.path_instructions = instructions;
-		this.next_instruction();
-		this.completed_path = false;
-		this.moved_at = this.game.time.virtual;
-		Mob.count ++;
-	}
-
-	move() {
-		// move through the path
-
-		if(this.completed_path === true || this.current_instruction == undefined) {
-			this.game.lives --;
-			return this.remove();
-		}
-
-		let {x : nx, y : ny} = this.current_instruction;
-		let {x,y}        = this.pos;
-		let moved_amount = this.speed * this.game.time.delta / 1000;
-
-		this.pos.x = this.limit(this.direction.x, moved_amount, x, nx);
-		this.pos.y = this.limit(this.direction.y, moved_amount, y, ny);
-
-		if(this.pos.x == nx && this.pos.y == ny) {
-			this.next_instruction();
-		}
-	}
-
-	next_instruction() {
-		if(this.path_instructions.length == 0)  {
-			this.completed_path = true;
-			return;
-		}
-
-		this.current_instruction = this.path_instructions.shift();
-		this.direction = this.current_instruction.sub(this.pos).sign();
-	}
-
-	limit(direction, amount, current_position, next_position) {
-		if(Math.abs(direction) == 0) return current_position;
-		return {[-1] : Math.max, [1]  : Math.min }[direction](current_position + amount * direction, next_position);
-	}
-
-	remove() {
-		this.game.delete(this);
-		Mob.count --;
-	}
-
-}
-
-export class Tower extends Animated {
-
-	constructor(game : Game, pos : Vector, shape : string, info : Object) {
-		super(game, pos, shape, info);
-		this.rank = 0;
-		this.forward = new Vector(1,0,0.2);
-		this.target = null;
-		this.shot_at = this.game.time.virtual;
-	}
-
-	click() {
-		// TODO upgrade tower
-		this.game.delete(this);
-	}
-
-	tick() {
-		// point and shoot mobs on range
-		super.tick();
-
-		let delay = 1000 / (this.info.shot.rate || 1);
-		if(this.game.time.virtual > this.shot_at + delay) {
-			this.shot_at = this.game.time.virtual;
-			this.game.add(new Shot(
-				this.game,
-				this.pos,
-				this.info.shot.shape || this.sprite.state.shape+"_shot",
-				{
-					damage: this.info.shot.damage || 1,
-					vel: this.forward.scale(this.info.shot.speed || 1)
-				}
-			));
-		}
-	}
-
-	draw() {
-		super.draw();
-		if(this.rank > 0) {
-			this.render.blit(this, {shape: "rank"+this.rank});
-		}
-	}
-}
-
-export class Shot extends Mobile {
-
-	move() {
-		// balistic movement and collision check
-		this.vel = this.vel.scale(0.999);
-		super.move();
-	}
-
-}
-
-export class Clock extends Animated {
-	// TODO Clock
-}
-
-// TODO Elevator
-
+Entity.registry = {};

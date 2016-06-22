@@ -4,7 +4,7 @@ import Tween from "./Tween";
 import Grid from "./Grid";
 import {Sheet,Frame} from "./Sprite";
 import SortedSet from "./SortedSet";
-import {Entity} from "./Entity";
+import Entity from "./Entity";
 
 export default class Render {
 
@@ -148,9 +148,12 @@ export default class Render {
 		}
 	}
 
-	draw_frame(pos2d : Vector, frame : Frame, op : string = "source-over",
+	draw_frame(pos2d : Vector, frame : Object, op : string = "source-over",
 		ctx : CanvasRenderingContext2D = this.screen_ctx) : void
 	{
+		// FIXME declare frame as type Frame, 
+		// 	for some reason this is not working now
+
 		let {image, geometry:{x,y,w,h}} = frame;
 
 		if(op) ctx.globalCompositeOperation = op;
@@ -164,7 +167,10 @@ export default class Render {
 		if(op) ctx.globalCompositeOperation = "source-over";
 	}
 
-	blit_clickable(e : Entity, frame : Frame = e.sprite.frame) : void {
+	blit_clickable(e : Entity, frame : Object = e.sprite.frame) : void {
+		// FIXME declare frame as type Frame, 
+		// 	for some reason this is not working now
+
 		// XXX clickable elements cannot have alpha gradients
 
 		let color = "#"+("00000"+(this.tint_color+=4).toString(16)).slice(-6);
@@ -181,7 +187,10 @@ export default class Render {
 
 	}
 
-	blit_screen(e : Entity, frame : Frame = e.sprite.frame) : void {
+	blit_screen(e : Entity, frame : Object = e.sprite.frame) : void {
+		// FIXME declare frame as type Frame, 
+		// 	for some reason this is not working now
+
 		this.draw_frame(e.pos2d, frame);
 
 		if(e.highlight) {

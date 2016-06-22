@@ -1,7 +1,7 @@
 {
 	"towers": {
-		"basic": "mob1 : Tower({'$':5,'shot':{'dmg':1,'shape':'mob1'}})",
-		"vet": "tower1 : Tower({'$':20,'shot':{'dmg':4,'shape':'mob1'}})"
+		"basic": "mob1 : Tower({'price':5,'shot':{'dmg':1,'shape':'mob1'}})",
+		"vet": "tower1 : Tower({'price':20,'shot':{'dmg':4,'shape':'mob1'}})"
 	},
 	"mobs": {
 		"mob1a": "mob1 : Mob({'speed':1})",

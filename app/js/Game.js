@@ -3,8 +3,7 @@ import Loader  from "./Loader";
 import Grid    from "./Grid";
 import {Sheet} from "./Sprite";
 import Render  from "./Render";
-import * as Entity  from "./Entity";
-
+import Entity  from "./Entity";
 
 // Logic to send waves
 
@@ -37,52 +36,14 @@ export default class Game {
 		}
 	}
 
-	add(e : Entity.Entity) : void {
+	add(e : Entity) : void {
 		if(e.tick) this.entity.add(e);
-		this.render.add(e);
-		this.grid.add(e);
 	}
 
-	delete(e : Entity.Entity) : void {
+	delete(e : Entity) : void {
 		if(e.tick) this.entity.delete(e);
-		this.render.delete(e);
-		this.grid.delete(e);
 		this.selector.delete(e);
 		this.highlight.delete(e);
-	}
-
-	parse(serialized : string) : Object {
-		let [,shape,,typename,info] = serialized.match(/^(\w+)(\s*:\s*(\w+)\(((.*))?\))?/)
-		// for instance, "larry : Mob({health:10,speed:20})"
-
-		if(!shape) {
-			throw "bad entity definition '"+serialized+"'";
-		}
-
-		let Type = typename ? Entity[typename] :
-			this.sheet.is_animated(shape) ? Entity.Animated : Entity.Still;
-
-		if(!Type) {
-			throw `type '${typename}' does not exist, review 'grid/${this.tier.grid}.json' file`;
-		}
-		if(Type.prototype instanceof Entity.Animated && !this.sheet.is_animated(shape)) {
-			throw `type '${typename}' is animated but shape '${shape}' is not check 'grid/${this.tier.grid}.json' file`;
-		}
-
-		info = info ? JSON.parse(info.replace(/'/g,'"')) : {};
-
-		return {
-			shape: shape,
-			typename: typename,
-			Type: Type,
-			info: info
-		};
-	}
-
-	deserialize(pos : Vector, serialized : string) : Entity.Entity {
-		let p = this.parse(serialized);
-
-		return new p.Type(this, pos, p.shape, p.info);
 	}
 
 	start(tier : number) {
@@ -129,7 +90,7 @@ export default class Game {
 
 				this.render.setup(g,s);
 				this.sheet.setup(this.time);
-				this.grid.setup( (p,e) => this.add( this.deserialize(p,e) ) );
+				this.grid.setup( (p,s) => Entity.load(this,p,s) );
 
 				this.running = true;
 				this.speed(1);
@@ -170,7 +131,7 @@ export default class Game {
 				.filter( e => e.click )
 				.forEach(e => e.focus());
 		} else {
-			this.selector.forEach(e => this.delete(e));
+			this.selector.forEach(e => e.delete());
 		}
 	}
 
@@ -208,14 +169,15 @@ export default class Game {
 		this.clock(true);
 	}
 
-	arrival() : void {
+	spawn() : void {
 		if(this.wave.length == 0)
 			return;
 
 		let wave = this.wave[0];
 		if(wave.time < this.time.analog) {
 			if(wave.quantity --> 0) {
-				this.add( this.deserialize(this.grid.path[0], this.info.mobs[wave.entity]) );
+				Entity.load(this, this.grid.path[0], 
+					this.info.mobs[wave.entity]);
 				wave.time += this.delay_between_mobs;
 			} else {
 				this.wave.shift();
@@ -244,7 +206,7 @@ export default class Game {
 		this.clock();
 
 		if(!this.ended()) {
-			this.arrival();
+			this.spawn();
 
 			this.entity.forEach(e => e.tick());
 		}
