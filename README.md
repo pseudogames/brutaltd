@@ -17,3 +17,8 @@
 * do the same grid API improvements on Entity.frame
 * allow entities to move beyond grid, but dont add on cell
 
+### TOWER
+
+* shoot enemy farther down the path
+* open the wheel selector to upgrade
+

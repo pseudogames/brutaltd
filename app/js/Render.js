@@ -215,7 +215,7 @@ export default class Render {
 	text(pos2d: Vector, text : string) : void {
 		this.screen_ctx.save();
 		this.screen_ctx.fillStyle="#ffffff";
-		this.screen_ctx.font="10px Arial";
+		this.screen_ctx.font=(this.size2d.x/4)+"px Tahoma";
 		this.screen_ctx.textAlign="center";
 		this.screen_ctx.shadowColor = "black";
 		this.screen_ctx.shadowOffsetX = 1; 
