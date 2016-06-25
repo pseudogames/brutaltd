@@ -1,6 +1,7 @@
 import Vector from "./Vector";
 import Loader from "./Loader";
 import Ortho  from "./Ortho";
+import Bounds from "./Bounds";
 
 // Sprite sheet subdivision
 
@@ -18,6 +19,10 @@ export type State = {
 	shape: string,
 	cycle?: string,
 	frame?: number,
+	speed?: number,
+	pos?: number,
+	last?: number,
+	count?: number,
 	timestamp?: number
 };
 
@@ -141,27 +146,34 @@ export class Sheet {
 		return this.elevation[shape];
 	}
 
-	initial_state(shape : string, cycle : string = "idle") : State {
+	set_frame(d : State, f : number) : void {
+		d.frame = f < d.count ? f : 0;
+		d.pos = d.frame / d.last;
+		d.timestamp = this.time.virtual;
+	}
+
+	start(shape : string, cycle : string = "idle") : State {
 		let d : State = {shape: shape};
 		if(this.animated[shape]) {
-			d.cycle = cycle;
-			d.frame = cycle == "idle" ? Math.floor(Math.random() * this.animated[shape][cycle].length) : 0;
-			d.timestamp = this.time.virtual;
+			this.change(d, cycle, Math.random());
+			d.speed = 1;
 		}
 		return d;
 	}
 
-	animate(d : State, speed : number = 1, next_cycle : ?string) : boolean {
-		if(this.time.virtual > d.timestamp + this.delay / speed) {
-			d.timestamp = this.time.virtual;
-			d.frame++;
-			if(d.frame >= this.animated[d.shape][d.cycle].length) {
-				d.frame = 0;
-				if(next_cycle) d.cycle = next_cycle;
-			}
+	animate(d : State) : boolean {
+		if(this.time.virtual > d.timestamp + this.delay / d.speed) {
+			this.set_frame(d, d.frame+1);
 			return true;
 		}
 		return false;
+	}
+
+	change(d : State, cycle : string, pos : number = d.pos) : void {
+		d.cycle = cycle;
+		this.set_frame(d, Math.floor(d.pos * d.last));
+		d.count = this.animated[d.shape][d.cycle].length;
+		d.last = d.count-1;
 	}
 
 	get(d : State) : Object {
@@ -173,8 +185,13 @@ export class Sheet {
 		};
 	}
 
-	get_state(direction : Vector) : string {
-		return this.info.faces[ [direction.x,direction.y].join("") ];
+	get_dir_cycle(dir : Vector) : string {
+		dir = dir.sign();
+		return this.info.faces[dir.toString()] || 
+		   this.info.faces[Bounds.scale(dir,new Vector(1,1,0)).toString()] ||
+		   this.info.faces[Bounds.scale(dir,new Vector(1,0,0)).toString()] ||
+		   this.info.faces[Bounds.scale(dir,new Vector(0,1,0)).toString()] ||
+			"idle";
 	}
 }
 

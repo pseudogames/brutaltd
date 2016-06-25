@@ -35,4 +35,25 @@ export default class Bounds {
 		);
 	}
 
+	static inside0(p : Vector, size : Vector) : boolean
+	{
+		return p.x >= 0 &&
+		       p.y >= 0 &&
+		       p.z >= 0 &&
+		       p.x <  size.x &&
+		       p.y <  size.y &&
+		       p.z <  size.z;
+	}
+
+	static inside(p : Vector, size : Vector,
+		origin : Vector = Vector.zero()) : boolean
+	{
+		return p.x >= origin.x &&
+		       p.y >= origin.y &&
+		       p.z >= origin.z &&
+		       p.x <  origin.x + size.x &&
+		       p.y <  origin.y + size.y &&
+		       p.z <  origin.z + size.z;
+	}
+
 }

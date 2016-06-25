@@ -34,6 +34,18 @@ export default class Vector {
 		);
 	}
 
+	magnitude() : number {
+		return Math.sqrt(
+			this.x * this.x + 
+			this.y * this.y + 
+			this.z * this.z
+		);
+	}
+
+	norm(magnitude : number = this.magnitude()) : Vector {
+		return this.scale(1/magnitude);
+	}
+
 	circle_ground(angle : number, radius : number) {
 		return new Vector(
 			this.x - Math.cos(angle) * radius,

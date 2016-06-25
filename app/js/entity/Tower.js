@@ -26,15 +26,15 @@ export default class Tower extends Animated {
 		let delay = 1000 / (this.info.shot.rate || 1);
 		if(this.game.time.virtual > this.shot_at + delay) {
 			this.shot_at = this.game.time.virtual;
-			this.game.add(new Shot(
+			new Shot(
 				this.game,
 				this.pos,
 				this.info.shot.shape || this.sprite.state.shape+"_shot",
 				{
 					damage: this.info.shot.damage || 1,
-					vel: this.forward.scale(this.info.shot.speed || 1)
+					vel: this.forward.scale(this.info.shot.speed || 3)
 				}
-			));
+			);
 		}
 	}
 

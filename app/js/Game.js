@@ -205,7 +205,7 @@ export default class Game {
 	tick() : void {
 		this.clock();
 
-		if(!this.ended()) {
+		if(!this.ended() && this.time.delta > 0) {
 			this.spawn();
 
 			this.entity.forEach(e => e.tick());

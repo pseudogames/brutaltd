@@ -57,7 +57,7 @@ export default class Entity {
 		this.render = game.render;
 		this.highlight = false;
 		this.sprite = {
-			state: this.sheet.initial_state(shape),
+			state: this.sheet.start(shape),
 			elevation: this.sheet.get_elevation(shape)
 		};
 		this.init();
@@ -65,17 +65,17 @@ export default class Entity {
 		this.project();
 
 		// add
-		this.grid.add(this);
-		this.render.add(this);
-		this.game.add(this);
+		this.grid.add(this);   // collision
+		this.render.add(this); // draw
+		this.game.add(this);   // tick
 
 		this.constructor.count ++;
 	}
 
 	delete() : void {
+		this.game.delete(this);
 		this.render.delete(this);
 		this.grid.delete(this);
-		this.game.delete(this);
 		this.constructor.count --;
 	}
 

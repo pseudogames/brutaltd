@@ -10,12 +10,14 @@
 
 ## TODO
 
+### SPRITE
+
+* turn State into a class and move Sheet.method(d:state,...) to it
+
 ### GRID
 
 * grid collision (using elevation)
-* improve grid / entity move API
 * do the same grid API improvements on Entity.frame
-* allow entities to move beyond grid, but dont add on cell
 
 ### TOWER
 

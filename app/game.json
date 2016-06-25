@@ -22,6 +22,7 @@
 			"lives": 10,
 			"towers": ["basic","vet","kickass","ultraman","superman"],
 			"wave": [
+				[ 1,  "mob1a",  9, "qa"],
 				[ 5,  "mob1a", 10, "standup"],
 				[10,  "mob1b", 13, "planning"],
 				[15,  "mob1c", 14, "review"],
