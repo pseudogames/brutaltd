@@ -66,7 +66,7 @@ export default class Grid {
 
 	add(e : Entity) : boolean {
 		let inside = false;
-		let p = e.pos.floor();
+		let p = e.pos.add(Grid.pivot).floor();
 
 		if(e.gridpos) {
 			if(p.equals(e.gridpos)) {
@@ -93,11 +93,18 @@ export default class Grid {
 		}
 	}
 
-	get(p : Vector) : Set {
-		p = p.floor();
-		return this.cell[p.z][p.y][p.x];
+	contact(e : Entity) : Set {
+		return e.gridpos ?
+			this.cell[e.gridpos.z][e.gridpos.y][e.gridpos.x] : 
+			Grid.empty;
 	}
 
+	get(p : Vector) : Set {
+		p = p.floor();
+		return Bounds.inside0(p, this.size) ?
+			this.cell[p.z][p.y][p.x] : Grid.empty;
+	}
 }
 
-
+Grid.pivot = new Vector(0.5, 0.5, 0.5);
+Grid.empty = new Set();

@@ -23,6 +23,9 @@ export default class Tower extends Animated {
 		// point and shoot mobs on range
 		super.tick();
 
+		this.forward = Vector.zero().circle(Math.random()*Math.PI*2);
+		this.forward.z = Math.random();
+
 		let delay = 1000 / (this.info.shot.rate || 1);
 		if(this.game.time.virtual > this.shot_at + delay) {
 			this.shot_at = this.game.time.virtual;
@@ -32,7 +35,8 @@ export default class Tower extends Animated {
 				this.info.shot.shape || this.sprite.state.shape+"_shot",
 				{
 					damage: this.info.shot.damage || 1,
-					vel: this.forward.scale(this.info.shot.speed || 3)
+					vel: this.forward.scale(this.info.shot.speed || 3),
+					parent: this
 				}
 			);
 		}
@@ -47,3 +51,4 @@ export default class Tower extends Animated {
 }
 
 Entity.register(Tower);
+

@@ -121,13 +121,13 @@ export default class Game {
 		let e = this.render.click(ev);
 		if(e) {
 			// click the top of the stack
-			Array.from(this.grid.get(e.pos))
+			Array.from(this.grid.contact(e))
 				.filter( e => e.click )
 				.sort((a,b) => b.sprite.elevation - a.sprite.elevation)
 				[0].click();
 			
 			// highlight the whole NEW stack
-			Array.from(this.grid.get(e.pos))
+			Array.from(this.grid.contact(e))
 				.filter( e => e.click )
 				.forEach(e => e.focus());
 		} else {
@@ -200,6 +200,24 @@ export default class Game {
 			document.getElementById("state").innerText = result;
 		}
 		return !this.running;
+	}
+
+	collide(e : Entity) : ?Entity {
+		let stack = this.grid.contact(e);
+		if(stack == null || stack.size == 0)
+			return null;
+		stack = Array.from(stack)
+			.filter((a) =>
+				a != e &&
+				a != e.info.parent &&
+				a.sprite.elevation + a.pos.z >=
+				e.sprite.elevation + e.pos.z 
+			)
+		if(stack.length == 0)
+			return null;
+		stack.sort((a,b) => b.sprite.elevation - a.sprite.elevation);
+		console.log(stack[0]);
+		return stack[0];
 	}
 
 	tick() : void {

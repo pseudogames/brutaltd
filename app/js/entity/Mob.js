@@ -10,11 +10,17 @@ export default class Mob extends Moving {
 		this.speed = this.info.speed;
 		this.path = this.game.grid.path.slice().map(v => v.copy());
 		this.goal = this.path.shift();
+		this.birth = this.game.time.virtual;
+		this.mileage = 0;
+		this.age = 0;
 	}
 
 	tick() {
 		// move through the path
 		let step = this.speed * this.game.time.delta / 1000;
+
+		this.age = this.game.time.virtual - this.birth;
+		this.mileage += step;
 
 		while(step > 0) {
 

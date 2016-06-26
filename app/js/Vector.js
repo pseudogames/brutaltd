@@ -46,7 +46,7 @@ export default class Vector {
 		return this.scale(1/magnitude);
 	}
 
-	circle_ground(angle : number, radius : number) {
+	circle(angle : number, radius : number = 1) {
 		return new Vector(
 			this.x - Math.cos(angle) * radius,
 			this.y + Math.sin(angle) * radius,

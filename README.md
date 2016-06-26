@@ -17,7 +17,6 @@
 ### GRID
 
 * grid collision (using elevation)
-* do the same grid API improvements on Entity.frame
 
 ### TOWER
 

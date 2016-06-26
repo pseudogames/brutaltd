@@ -2,7 +2,7 @@
 	"size": [50,66],
 	"fps": 6,
 	"projection": [
-		[ 32,  8, 0.23],
+		[ 32,  8, 0.73],
 		[-15, 15, 0.991],
 		[  0,-41, 0.91]
 	],
@@ -16,24 +16,29 @@
 		"mob": {
 			"pos": [0,1],
 			"cycle": [6, "idle"],
-			"shape": [0.9, "mob1"]
+			"shape": [0.7, "mob1"]
+		},
+		"shot": {
+			"pos": [0,2],
+			"cycle": [6, "idle"],
+			"shape": [0.7, "shot1"]
 		},
 		"tower": {
 			"pos": [0,2],
 			"cycle": [6, "idle"],
-			"shape": [0.8, "tower1"]
+			"shape": [0.6, "tower1"]
 		},
 		"fluid": {
 			"pos": [3,0],
 			"cycle": [3, "idle"],
-			"shape": [0.3, "lava"]
+			"shape": [0.1, "lava"]
 		}
 	},
 	"still": {
 		"base": {
 			"pos": [0,0],
 			"shape": [
-				[0.4, "wall", 0.3, "floor","table"]
+				[0.9, "wall", 0.2, "floor", 0.5, "table"]
 			]
 		},
 		"icon": {
